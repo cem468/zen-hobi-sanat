@@ -383,6 +383,15 @@ strong{ font-weight:600; }
 .course-card .media--slideshow--5 img{ animation-name:cardFade5; animation-duration:20s; }
 .course-card .media--slideshow--5 img:nth-child(5){ animation-delay:16s; }
 @keyframes cardFade5{ 0%{opacity:0} 2%{opacity:1} 18%{opacity:1} 20%{opacity:0} 100%{opacity:0} }
+/* 10 görsellik varyant (Yetişkin Sanat Atölyesi kartı) — 4sn/görsel, 40sn döngü */
+.course-card .media--slideshow--10 img{ animation-name:cardFade10; animation-duration:40s; }
+.course-card .media--slideshow--10 img:nth-child(5){ animation-delay:16s; }
+.course-card .media--slideshow--10 img:nth-child(6){ animation-delay:20s; }
+.course-card .media--slideshow--10 img:nth-child(7){ animation-delay:24s; }
+.course-card .media--slideshow--10 img:nth-child(8){ animation-delay:28s; }
+.course-card .media--slideshow--10 img:nth-child(9){ animation-delay:32s; }
+.course-card .media--slideshow--10 img:nth-child(10){ animation-delay:36s; }
+@keyframes cardFade10{ 0%{opacity:0} 1%{opacity:1} 9%{opacity:1} 10%{opacity:0} 100%{opacity:0} }
 /* 7 görsellik varyant (Seramik kartı) — 4sn/görsel, 28sn döngü */
 .course-card .media--slideshow--7 img{ animation-name:cardFade7; animation-duration:28s; }
 .course-card .media--slideshow--7 img:nth-child(5){ animation-delay:16s; }
