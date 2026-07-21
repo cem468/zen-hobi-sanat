@@ -379,6 +379,9 @@ strong{ font-weight:600; }
 .course-card .media--slideshow img:nth-child(3){ animation-delay:8s; }
 .course-card .media--slideshow img:nth-child(4){ animation-delay:12s; }
 @keyframes cardFade{ 0%{opacity:0} 3%{opacity:1} 22%{opacity:1} 25%{opacity:0} 100%{opacity:0} }
+/* 2 görsellik varyant (Pouring kartı) — 4sn/görsel, 8sn döngü */
+.course-card .media--slideshow--2 img{ animation-name:cardFade2; animation-duration:8s; }
+@keyframes cardFade2{ 0%{opacity:0} 4%{opacity:1} 46%{opacity:1} 50%{opacity:0} 100%{opacity:0} }
 /* 5 görsellik varyant (Resim kartı) — 4sn/görsel, 20sn döngü */
 .course-card .media--slideshow--5 img{ animation-name:cardFade5; animation-duration:20s; }
 .course-card .media--slideshow--5 img:nth-child(5){ animation-delay:16s; }
