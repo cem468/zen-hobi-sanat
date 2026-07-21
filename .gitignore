@@ -1,0 +1,4 @@
+# Local tooling / temp
+.claude/settings.local.json
+.playwright-mcp/
+*.log
