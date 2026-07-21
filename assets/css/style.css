@@ -472,6 +472,9 @@ strong{ font-weight:600; }
 .insta-tiles a:hover img{ transform:scale(1.08); }
 .insta-tiles a::after{ content:""; position:absolute; inset:0; background:rgba(182,93,51,0); transition:background .35s; }
 .insta-tiles a:hover::after{ background:rgba(182,93,51,.22); }
+.insta-embeds{ display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr)); gap:1.4rem; align-items:start; justify-items:center; }
+.insta-embeds .instagram-media{ min-width:0 !important; width:100% !important; max-width:420px !important; margin:0 !important; }
+.insta-embeds iframe{ max-width:100% !important; }
 .btn--insta{ --bg:linear-gradient(45deg,#f09433,#e6683c 30%,#dc2743 55%,#cc2366 78%,#bc1888); --fg:#fff; }
 .btn--insta:hover{ filter:brightness(1.07); background:linear-gradient(45deg,#f09433,#e6683c 30%,#dc2743 55%,#cc2366 78%,#bc1888); }
 
