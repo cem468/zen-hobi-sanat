@@ -531,6 +531,7 @@ fieldset legend{ padding:0 .6em; font-family:var(--serif); font-size:var(--step-
 .form-note{ font-size:.82rem; color:var(--muted); margin-top:1rem; }
 .form-success{ display:none; padding:1.1rem 1.2rem; border-radius:12px; background:#e8f4ec; color:#1f6b3c; border:1px solid #bfe3cd; font-weight:600; font-size:var(--step--1); margin-bottom:1.2rem; }
 .form-success.show{ display:block; }
+[hidden]{ display:none !important; }
 .form-error{ display:none; padding:1.1rem 1.2rem; border-radius:12px; background:#fbeaea; color:#9b2c2c; border:1px solid #f0c4c4; font-weight:600; font-size:var(--step--1); margin-bottom:1.2rem; }
 .form-error.show{ display:block; }
 

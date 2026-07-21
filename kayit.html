@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=25">
+<link rel="stylesheet" href="assets/css/style.css?v=26">
 </head>
 <body>
 <div class="fx-grain" aria-hidden="true"></div>
@@ -80,123 +80,133 @@
         <input type="hidden" name="subject" value="Zen Hobi Sanat — Yeni Kurs Başvurusu">
         <div class="form-success">Başvurunuz alındı! En kısa sürede sizi arayıp uygun atölye, gün ve saati birlikte planlayacağız.</div>
 
-        <fieldset>
+        <fieldset class="kayit-tipi">
           <legend>Kayıt kimin için?</legend>
           <div class="field">
             <label><input type="radio" name="kayit_tipi" value="Yetişkin" required> Yetişkin</label>
             <label><input type="radio" name="kayit_tipi" value="Çocuk"> Çocuk</label>
           </div>
-          <p class="form-note">Çocuk kaydında bu bölümü veli doldurur; çocuğun bilgileri ilgili adımda istenir.</p>
+          <p class="form-note">Önce kimin için kayıt yapıldığını seçin — forma göre yalnızca gerekli alanlar açılır. Çocuk kaydında bu bölümü veli doldurur.</p>
         </fieldset>
 
-        <fieldset>
-          <legend>Başvuran / Veli Bilgileri</legend>
-          <div class="field">
-            <label for="ad_soyad">Adı Soyadı <span class="req">*</span></label>
-            <input type="text" id="ad_soyad" name="ad_soyad" autocomplete="name" required>
-          </div>
-          <div class="form-grid">
+        <p class="kayit-hint form-note" style="text-align:center;padding:.4rem 0 1.2rem">↑ Devam etmek için yukarıdan “Yetişkin” ya da “Çocuk” seçin.</p>
+
+        <div id="kayitDetay" hidden>
+
+          <fieldset>
+            <legend data-legend data-legend-adult="Başvuran Bilgileri" data-legend-child="Veli Bilgileri">Başvuran Bilgileri</legend>
             <div class="field">
-              <label for="dogum_tarihi">Doğum Tarihi</label>
-              <input type="date" id="dogum_tarihi" name="dogum_tarihi" autocomplete="bday">
+              <label for="ad_soyad">Adı Soyadı <span class="req">*</span></label>
+              <input type="text" id="ad_soyad" name="ad_soyad" autocomplete="name" required>
             </div>
-            <div class="field">
-              <label for="ogrenim">Öğrenim Durumu</label>
-              <select id="ogrenim" name="ogrenim_durumu">
-                <option value="İlkokul">İlkokul</option>
-                <option value="Ortaokul">Ortaokul</option>
-                <option value="Lise">Lise</option>
-                <option value="Önlisans">Önlisans</option>
-                <option value="Lisans">Lisans</option>
-                <option value="Lisansüstü">Lisansüstü</option>
-                <option value="Diğer">Diğer</option>
-              </select>
+            <div class="form-grid only-adult">
+              <div class="field">
+                <label for="dogum_tarihi">Doğum Tarihi</label>
+                <input type="date" id="dogum_tarihi" name="dogum_tarihi" autocomplete="bday">
+              </div>
+              <div class="field">
+                <label for="ogrenim">Öğrenim Durumu</label>
+                <select id="ogrenim" name="ogrenim_durumu">
+                  <option value="İlkokul">İlkokul</option>
+                  <option value="Ortaokul">Ortaokul</option>
+                  <option value="Lise">Lise</option>
+                  <option value="Önlisans">Önlisans</option>
+                  <option value="Lisans">Lisans</option>
+                  <option value="Lisansüstü">Lisansüstü</option>
+                  <option value="Diğer">Diğer</option>
+                </select>
+              </div>
             </div>
-          </div>
-          <div class="form-grid">
-            <div class="field">
+            <div class="field only-adult">
               <label for="meslek">Mesleği</label>
               <input type="text" id="meslek" name="meslek" autocomplete="organization-title">
+            </div>
+            <div class="form-grid">
+              <div class="field">
+                <label for="telefon1">Telefon 1 <span class="req">*</span></label>
+                <input type="tel" id="telefon1" name="telefon1" autocomplete="tel" required>
+              </div>
+              <div class="field">
+                <label for="telefon2">Telefon 2</label>
+                <input type="tel" id="telefon2" name="telefon2" autocomplete="tel">
+              </div>
             </div>
             <div class="field">
               <label for="eposta">E-posta</label>
               <input type="email" id="eposta" name="eposta" autocomplete="email">
             </div>
-          </div>
-          <div class="form-grid">
             <div class="field">
-              <label for="telefon1">Telefon 1 <span class="req">*</span></label>
-              <input type="tel" id="telefon1" name="telefon1" autocomplete="tel" required>
+              <label for="adres">Adres</label>
+              <textarea id="adres" name="adres" rows="2" autocomplete="street-address"></textarea>
             </div>
-            <div class="field">
-              <label for="telefon2">Telefon 2</label>
-              <input type="tel" id="telefon2" name="telefon2" autocomplete="tel">
-            </div>
-          </div>
-          <div class="field">
-            <label for="adres">Adres</label>
-            <textarea id="adres" name="adres" rows="2" autocomplete="street-address"></textarea>
-          </div>
-        </fieldset>
+          </fieldset>
 
-        <fieldset>
-          <legend>Çocuk Bilgileri (çocuk kaydı için)</legend>
-          <div class="field">
-            <label for="cocuk_ad">Çocuğun Adı Soyadı</label>
-            <input type="text" id="cocuk_ad" name="cocuk_ad_soyad">
-          </div>
-          <div class="form-grid">
+          <fieldset class="only-child">
+            <legend>Çocuk Bilgileri</legend>
             <div class="field">
-              <label for="cocuk_dogum">Çocuğun Doğum Tarihi</label>
-              <input type="date" id="cocuk_dogum" name="cocuk_dogum_tarihi">
+              <label for="cocuk_ad">Çocuğun Adı Soyadı <span class="req">*</span></label>
+              <input type="text" id="cocuk_ad" name="cocuk_ad_soyad" required>
             </div>
-            <div class="field">
-              <label for="cocuk_okul">Okul / Sınıf</label>
-              <input type="text" id="cocuk_okul" name="cocuk_okul_sinif">
+            <div class="form-grid">
+              <div class="field">
+                <label for="cocuk_dogum">Çocuğun Doğum Tarihi <span class="req">*</span></label>
+                <input type="date" id="cocuk_dogum" name="cocuk_dogum_tarihi" required>
+              </div>
+              <div class="field">
+                <label for="cocuk_okul">Okul / Sınıf</label>
+                <input type="text" id="cocuk_okul" name="cocuk_okul_sinif">
+              </div>
             </div>
-          </div>
-        </fieldset>
+          </fieldset>
 
-        <fieldset>
-          <legend>Kurs Bilgileri</legend>
-          <div class="field">
-            <label for="atolye">Katılmak İstediğiniz Atölye <span class="req">*</span></label>
-            <select id="atolye" name="atolye" required>
-              <option value="Seramik Atölyesi">Seramik Atölyesi</option>
-              <option value="Resim Atölyesi">Resim Atölyesi</option>
-              <option value="Heykel Atölyesi">Heykel Atölyesi</option>
-              <option value="Dekoratif Boyama">Dekoratif Boyama</option>
-              <option value="Workshop (tek seans)">Workshop (tek seans)</option>
-            </select>
-          </div>
-          <div class="form-grid">
-            <div class="field">
-              <label for="baslangic">Kurs Başlangıç Tarihi</label>
-              <input type="date" id="baslangic" name="baslangic_tarihi">
-            </div>
-            <div class="field">
-              <label for="gun_saat">Tercih Ettiğiniz Gün / Saat</label>
-              <select id="gun_saat" name="gun_saat">
-                <option value="Hafta içi gündüz">Hafta içi gündüz</option>
-                <option value="Hafta içi akşam">Hafta içi akşam</option>
-                <option value="Cumartesi">Cumartesi</option>
-                <option value="Pazar">Pazar</option>
-                <option value="Farketmez">Farketmez</option>
+          <fieldset>
+            <legend>Kurs Bilgileri</legend>
+            <div class="field only-adult">
+              <label for="atolye">Katılmak İstediğiniz Atölye <span class="req">*</span></label>
+              <select id="atolye" name="atolye" required>
+                <option value="Seramik Atölyesi">Seramik Atölyesi</option>
+                <option value="Resim Atölyesi">Resim Atölyesi</option>
+                <option value="Heykel Atölyesi">Heykel Atölyesi</option>
+                <option value="Dekoratif Boyama">Dekoratif Boyama</option>
+                <option value="Workshop (tek seans)">Workshop (tek seans)</option>
               </select>
             </div>
-          </div>
-          <div class="field">
-            <label for="eklemek">Eklemek istedikleriniz</label>
-            <textarea id="eklemek" name="eklemek" rows="3"></textarea>
-          </div>
-        </fieldset>
+            <div class="field only-child">
+              <label for="atolye_cocuk">Katılmak İstediği Atölye <span class="req">*</span></label>
+              <select id="atolye_cocuk" name="atolye" required>
+                <option value="Yaratıcı Çocuk Atölyesi">Yaratıcı Çocuk Atölyesi</option>
+                <option value="Çocuk Workshop (tek seans)">Workshop (tek seans)</option>
+              </select>
+            </div>
+            <div class="form-grid">
+              <div class="field">
+                <label for="baslangic">Kurs Başlangıç Tarihi</label>
+                <input type="date" id="baslangic" name="baslangic_tarihi">
+              </div>
+              <div class="field">
+                <label for="gun_saat">Tercih Ettiğiniz Gün / Saat</label>
+                <select id="gun_saat" name="gun_saat">
+                  <option value="Hafta içi gündüz">Hafta içi gündüz</option>
+                  <option value="Hafta içi akşam">Hafta içi akşam</option>
+                  <option value="Cumartesi">Cumartesi</option>
+                  <option value="Pazar">Pazar</option>
+                  <option value="Farketmez">Farketmez</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="eklemek">Eklemek istedikleriniz</label>
+              <textarea id="eklemek" name="eklemek" rows="3"></textarea>
+            </div>
+          </fieldset>
 
-        <div class="form-note" style="border:1px solid var(--line,#e6ddd2);border-left:3px solid var(--clay,#171717);border-radius:.6rem;padding:1rem 1.1rem;background:rgba(0,0,0,.04);margin:1.4rem 0">
-          <strong>Telafi hakkınız.</strong> Katılamadığınız bir dersi, aynı ay içinde uygun olan diğer sınıflarımıza gelerek telafi edebilirsiniz. Aynı ay içinde telafi edilmeyen dersler ne yazık ki geçerliliğini yitirir. Anlayışınız için teşekkür eder, derslerinizi aksatmadan keyifle üretmenizi dileriz.
+          <div class="form-note" style="border:1px solid var(--line,#e6ddd2);border-left:3px solid var(--clay,#171717);border-radius:.6rem;padding:1rem 1.1rem;background:rgba(0,0,0,.04);margin:1.4rem 0">
+            <strong>Telafi hakkınız.</strong> Katılamadığınız bir dersi, aynı ay içinde uygun olan diğer sınıflarımıza gelerek telafi edebilirsiniz. Aynı ay içinde telafi edilmeyen dersler ne yazık ki geçerliliğini yitirir. Anlayışınız için teşekkür eder, derslerinizi aksatmadan keyifle üretmenizi dileriz.
+          </div>
+
+          <button type="submit" class="btn btn--lg btn--block" data-label="Başvuruyu Gönder">Başvuruyu Gönder</button>
+          <p class="form-note">Başvurunuz bize ulaştığında en kısa sürede sizinle iletişime geçeceğiz. Dilerseniz WhatsApp'tan da yazabilirsiniz: 0544 403 42 66.</p>
         </div>
-
-        <button type="submit" class="btn btn--lg btn--block" data-label="Başvuruyu Gönder">Başvuruyu Gönder</button>
-        <p class="form-note">Başvurunuz bize ulaştığında en kısa sürede sizinle iletişime geçeceğiz. Dilerseniz WhatsApp'tan da yazabilirsiniz: 0544 403 42 66.</p>
       </form>
     </div>
   </div>
@@ -263,5 +273,55 @@
 <script src="assets/js/vendor/motion.umd.js" defer></script>
 <script src="assets/js/main.js?v=7" defer></script>
 <script src="assets/js/motion-fx.js?v=2" defer></script>
+
+<!-- Koşullu kayıt formu: yetişkin / çocuk seçimine göre alanları göster + gönderime dahil et -->
+<script>
+(function () {
+  var form = document.querySelector('form[data-form]');
+  if (!form) return;
+  var detay = form.querySelector('#kayitDetay');
+  if (!detay) return;
+  var hint = form.querySelector('.kayit-hint');
+  var legend = form.querySelector('[data-legend]');
+
+  function setEnabled(el, on) {
+    el.hidden = !on;
+    var ctrls = el.querySelectorAll('input, select, textarea');
+    for (var i = 0; i < ctrls.length; i++) ctrls[i].disabled = !on;
+  }
+  function eachGroup(sel, fn) {
+    var g = detay.querySelectorAll(sel);
+    for (var i = 0; i < g.length; i++) fn(g[i]);
+  }
+
+  // Başlangıç: seçim yapılana kadar tüm detayları gizle + pasifleştir
+  // (JS yoksa form olduğu gibi görünüp çalışmaya devam eder — progressive enhancement)
+  detay.hidden = true;
+  var all = detay.querySelectorAll('input, select, textarea');
+  for (var i = 0; i < all.length; i++) all[i].disabled = true;
+
+  function apply(type) {
+    var adult = type === 'Yetişkin';
+    detay.hidden = false;
+    if (hint) hint.hidden = true;
+
+    // Ortak alanları aç
+    var all = detay.querySelectorAll('input, select, textarea');
+    for (var i = 0; i < all.length; i++) all[i].disabled = false;
+
+    // Tipe özel grupları göster/gizle (gizli olanlar pasif → gönderilmez, validasyona girmez)
+    eachGroup('.only-adult', function (el) { setEnabled(el, adult); });
+    eachGroup('.only-child', function (el) { setEnabled(el, !adult); });
+
+    if (legend) legend.textContent = adult ? legend.dataset.legendAdult : legend.dataset.legendChild;
+  }
+
+  var radios = form.querySelectorAll('input[name="kayit_tipi"]');
+  for (var r = 0; r < radios.length; r++) {
+    radios[r].addEventListener('change', function () { apply(this.value); });
+    if (radios[r].checked) apply(radios[r].value); // sayfa geri/yenile sonrası seçili kalırsa
+  }
+})();
+</script>
 </body>
 </html>
