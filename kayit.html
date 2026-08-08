@@ -75,9 +75,10 @@
 <section class="section">
   <div class="wrap">
     <div class="form-card" style="max-width:46rem;margin:0 auto" data-reveal>
-      <form data-form action="https://api.web3forms.com/submit" method="POST">
+      <form data-form id="kayitForm" action="https://api.web3forms.com/submit" method="POST">
         <input type="hidden" name="access_key" value="5e8c0ba3-06d2-4088-9ea0-a0479f1edd93">
         <input type="hidden" name="subject" value="Zen Hobi Sanat — Yeni Kurs Başvurusu">
+        <input type="hidden" name="basvuru_dokumani" id="basvuruDokumani">
         <div class="form-success">Başvurunuz alındı! En kısa sürede sizi arayıp uygun atölye, gün ve saati birlikte planlayacağız.</div>
 
         <fieldset class="kayit-tipi">
@@ -321,6 +322,74 @@
     radios[r].addEventListener('change', function () { apply(this.value); });
     if (radios[r].checked) apply(radios[r].value); // sayfa geri/yenile sonrası seçili kalırsa
   }
+})();
+
+// Gönderim öncesi: doldurulan alanlardan düzenli, A4'e yazdırmaya uygun tek parça
+// bir "başvuru dökümanı" metni oluşturup e-postaya bu haliyle gitmesini sağlar.
+// Belge fieldset/legend/label metinlerinden türetildiği için form alanları
+// değişse de elle güncelleme gerektirmez.
+(function () {
+  var form = document.getElementById('kayitForm');
+  if (!form) return;
+
+  function fieldLabel(el) {
+    var lbl = el.id && form.querySelector('label[for="' + el.id + '"]');
+    return lbl ? lbl.textContent.replace(/\*/g, '').trim() : el.name;
+  }
+
+  function buildDocument() {
+    var kayitTipi = (form.querySelector('input[name="kayit_tipi"]:checked') || {}).value || '';
+    var now = new Date();
+    var tarih = now.toLocaleDateString('tr-TR') + ' ' + now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+
+    var lines = [];
+    lines.push('ZEN HOBİ SANAT — KURS BAŞVURU FORMU');
+    lines.push('Başvuru Tarihi : ' + tarih);
+    lines.push('Kayıt Türü     : ' + kayitTipi);
+    lines.push('========================================');
+
+    var fieldsets = form.querySelectorAll('#kayitDetay fieldset');
+    for (var f = 0; f < fieldsets.length; f++) {
+      var fs = fieldsets[f];
+      var legend = fs.querySelector('legend');
+      if (!legend) continue;
+      var rows = [];
+      var ctrls = fs.querySelectorAll('input, select, textarea');
+      for (var c = 0; c < ctrls.length; c++) {
+        var el = ctrls[c];
+        if (el.disabled || el.type === 'radio' || el.type === 'checkbox') continue;
+        var val = (el.value || '').trim();
+        if (!val) continue;
+        rows.push([fieldLabel(el), val]);
+      }
+      if (!rows.length) continue;
+      var maxLabel = 0;
+      for (var m = 0; m < rows.length; m++) maxLabel = Math.max(maxLabel, rows[m][0].length);
+      lines.push('');
+      lines.push(legend.textContent.trim().toUpperCase());
+      lines.push(new Array(legend.textContent.trim().length + 1).join('-'));
+      for (var i = 0; i < rows.length; i++) {
+        lines.push(rows[i][0] + new Array(maxLabel - rows[i][0].length + 1).join(' ') + ' : ' + rows[i][1]);
+      }
+    }
+
+    lines.push('');
+    lines.push('========================================');
+    lines.push('Zen Hobi Sanat');
+    lines.push('Tel: 0544 403 42 66  ·  E-posta: info@zenhobisanat.com');
+    lines.push('Bahçeşehir 2. Kısım Mah. M. Kemal Atatürk Bulvarı No:23 D:1, Başakşehir/İstanbul');
+    return lines.join('\n');
+  }
+
+  // Yakalama (capture) aşamasında document üzerinde dinlemek, main.js'in kendi
+  // submit dinleyicisi (formun hedef aşamasında) devreye girmeden önce çalışmamızı
+  // sağlar — böylece FormData(form) oluşturulmadan hemen önce alan doldurulmuş olur.
+  document.addEventListener('submit', function (e) {
+    if (e.target !== form) return;
+    if (!form.checkValidity()) return; // geçersizse dokunma, native/main.js hata gösterimi devreye girsin
+    var docField = form.querySelector('#basvuruDokumani');
+    if (docField) docField.value = buildDocument();
+  }, true);
 })();
 </script>
 </body>
