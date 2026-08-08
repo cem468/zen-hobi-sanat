@@ -337,6 +337,29 @@
     return lbl ? lbl.textContent.replace(/\*/g, '').trim() : el.name;
   }
 
+  // E-posta istemcileri değeri hangi yazı tipiyle/genişlikte gösterirse göstersin
+  // A4'e yazdırınca kenardan kırpılmasın diye satırları kısa tutup elle kaydırıyoruz
+  // (hizalama için boşlukla dolgu kullanmıyoruz — HTML e-postada orantısal yazı
+  // tipinde hizalama zaten bozulur, tek fark satırların taşması olurdu).
+  var MAX_WIDTH = 58;
+  function wrapInto(lines, prefix, text) {
+    var indent = new Array(prefix.length + 1).join(' ');
+    var words = String(text).split(/\s+/);
+    var line = prefix;
+    for (var i = 0; i < words.length; i++) {
+      var w = words[i];
+      var atLineStart = (line === prefix || line === indent);
+      var candidate = atLineStart ? line + w : line + ' ' + w;
+      if (candidate.length > MAX_WIDTH && !atLineStart) {
+        lines.push(line);
+        line = indent + w;
+      } else {
+        line = candidate;
+      }
+    }
+    lines.push(line);
+  }
+
   function buildDocument() {
     var kayitTipi = (form.querySelector('input[name="kayit_tipi"]:checked') || {}).value || '';
     var now = new Date();
@@ -344,8 +367,8 @@
 
     var lines = [];
     lines.push('ZEN HOBİ SANAT — KURS BAŞVURU FORMU');
-    lines.push('Başvuru Tarihi : ' + tarih);
-    lines.push('Kayıt Türü     : ' + kayitTipi);
+    lines.push('Başvuru Tarihi: ' + tarih);
+    lines.push('Kayıt Türü: ' + kayitTipi);
     lines.push('========================================');
 
     var fieldsets = form.querySelectorAll('#kayitDetay fieldset');
@@ -363,13 +386,11 @@
         rows.push([fieldLabel(el), val]);
       }
       if (!rows.length) continue;
-      var maxLabel = 0;
-      for (var m = 0; m < rows.length; m++) maxLabel = Math.max(maxLabel, rows[m][0].length);
       lines.push('');
       lines.push(legend.textContent.trim().toLocaleUpperCase('tr-TR'));
       lines.push(new Array(legend.textContent.trim().length + 1).join('-'));
       for (var i = 0; i < rows.length; i++) {
-        lines.push(rows[i][0] + new Array(maxLabel - rows[i][0].length + 1).join(' ') + ' : ' + rows[i][1]);
+        wrapInto(lines, rows[i][0] + ': ', rows[i][1]);
       }
     }
 
@@ -377,7 +398,7 @@
     lines.push('========================================');
     lines.push('Zen Hobi Sanat');
     lines.push('Tel: 0544 403 42 66  ·  E-posta: info@zenhobisanat.com');
-    lines.push('Bahçeşehir 2. Kısım Mah. M. Kemal Atatürk Bulvarı No:23 D:1, Başakşehir/İstanbul');
+    wrapInto(lines, '', 'Bahçeşehir 2. Kısım Mah. M. Kemal Atatürk Bulvarı No:23 D:1, Başakşehir/İstanbul');
     return lines.join('\n');
   }
 
