@@ -366,7 +366,7 @@
       var maxLabel = 0;
       for (var m = 0; m < rows.length; m++) maxLabel = Math.max(maxLabel, rows[m][0].length);
       lines.push('');
-      lines.push(legend.textContent.trim().toUpperCase());
+      lines.push(legend.textContent.trim().toLocaleUpperCase('tr-TR'));
       lines.push(new Array(legend.textContent.trim().length + 1).join('-'));
       for (var i = 0; i < rows.length; i++) {
         lines.push(rows[i][0] + new Array(maxLabel - rows[i][0].length + 1).join(' ') + ' : ' + rows[i][1]);
