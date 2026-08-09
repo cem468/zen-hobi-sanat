@@ -293,6 +293,11 @@ strong{ font-weight:600; }
 
 /* page hero (inner) */
 .phero{ position:relative; padding-block:clamp(8.5rem,15vh,12rem) clamp(3rem,6vw,5rem); min-height:clamp(26rem,62vh,33rem); display:flex; align-items:center; background:var(--night); color:var(--paper); overflow:hidden; }
+@media (max-width:640px){
+  .phero{ padding-block:clamp(7rem,20vh,8.5rem) clamp(2.2rem,6vw,3rem); min-height:clamp(24rem,58vh,30rem); }
+  /* full image visible, letterboxed on a dark ground — nothing gets cropped off */
+  .phero-media img,.phero-media video{ object-fit:contain; }
+}
 .phero-media{ position:absolute; inset:0; z-index:0; }
 .phero-media img,.phero-media video{ width:100%; height:100%; object-fit:cover; opacity:.42; }
 .phero::after{ content:""; position:absolute; inset:0; background:linear-gradient(180deg,rgba(21,16,12,.6),rgba(21,16,12,.82)); z-index:1; }
