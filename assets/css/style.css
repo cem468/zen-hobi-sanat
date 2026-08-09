@@ -197,11 +197,11 @@ strong{ font-weight:600; }
 }
 .nav-menu{ display:flex; align-items:center; gap:.15rem; margin-left:auto; }
 .nav-menu > a, .has-sub > a{
-  position:relative; padding:.55em .85em; font-weight:600; font-size:var(--step--1);
+  position:relative; padding:.55em .58em; font-weight:600; font-size:var(--step--1);
   color:var(--ink); border-radius:8px; transition:color .3s var(--ease);
 }
 .nav-menu a::after{
-  content:""; position:absolute; left:.85em; right:.85em; bottom:.28em; height:2px;
+  content:""; position:absolute; left:.58em; right:.58em; bottom:.28em; height:2px;
   background:var(--clay); border-radius:2px; transform:scaleX(0); transform-origin:left;
   transition:transform .35s var(--ease);
 }
@@ -235,22 +235,23 @@ strong{ font-weight:600; }
   .nav-toggle{ display:block; }
   .nav-cta{ margin-left:auto; }
   .nav-menu{
-    position:fixed; inset:0 0 0 auto; width:min(86vw,400px);
+    position:fixed; inset:0 0 0 auto; width:max-content; max-width:86vw;
     flex-direction:column; align-items:stretch; gap:.1rem; margin:0;
-    background:var(--surface); padding:6rem 1.6rem 2rem; overflow-y:auto;
+    text-align:right;
+    background:transparent; padding:6rem 1.8rem 2rem 2.6rem; overflow-y:auto;
     transform:translateX(100%); transition:transform .5s var(--ease);
-    box-shadow:var(--shadow-lg); z-index:var(--z-menu);
+    box-shadow:none; z-index:var(--z-menu);
   }
   .nav-open .nav-menu{ transform:translateX(0); }
-  .nav-menu > a, .has-sub > a{ padding:.85em .6em; font-size:1.05rem; border-bottom:1px solid var(--line-soft); border-radius:0; }
+  .nav-menu > a, .has-sub > a{ padding:.85em .6em; font-size:1.05rem; border-bottom:1px solid rgba(255,255,255,.14); border-radius:0; white-space:nowrap; }
   .nav-menu a::after{ display:none; }
   .has-sub > a::before{ display:none; }
-  .submenu{ position:static; transform:none; opacity:1; visibility:visible; box-shadow:none; border:none; background:transparent; padding:.2rem 0 .6rem 1rem; min-width:0; }
-  .submenu a{ padding:.6em; }
-  .nav-scrim{ position:fixed; inset:0; background:rgba(21,16,12,.5); backdrop-filter:blur(3px); opacity:0; visibility:hidden; transition:.4s; z-index:var(--z-overlay); }
+  .submenu{ position:static; transform:none; opacity:1; visibility:visible; box-shadow:none; border:none; background:transparent; padding:.2rem 1rem .6rem 0; min-width:0; }
+  .submenu a{ padding:.6em; white-space:nowrap; }
+  .nav-scrim{ position:fixed; inset:0; background:rgba(10,8,6,.64); backdrop-filter:blur(6px); opacity:0; visibility:hidden; transition:.4s; z-index:var(--z-overlay); }
   .nav-open .nav-scrim{ opacity:1; visibility:visible; }
 }
-@media (max-width:560px){ .nav-cta .btn{ display:none; } }
+@media (max-width:400px){ .nav-cta .btn{ padding:.55em 1em; font-size:var(--step--2); } }
 
 /* =================================================================
    HERO
@@ -291,7 +292,7 @@ strong{ font-weight:600; }
 @keyframes cue{ 0%{opacity:0;transform:translate(-50%,0)} 30%{opacity:1} 70%{opacity:1} 100%{opacity:0;transform:translate(-50%,12px)} }
 
 /* page hero (inner) */
-.phero{ position:relative; padding-block:clamp(8.5rem,15vh,12rem) clamp(3rem,6vw,5rem); background:var(--night); color:var(--paper); overflow:hidden; }
+.phero{ position:relative; padding-block:clamp(8.5rem,15vh,12rem) clamp(3rem,6vw,5rem); min-height:clamp(26rem,62vh,33rem); display:flex; align-items:center; background:var(--night); color:var(--paper); overflow:hidden; }
 .phero-media{ position:absolute; inset:0; z-index:0; }
 .phero-media img,.phero-media video{ width:100%; height:100%; object-fit:cover; opacity:.42; }
 .phero::after{ content:""; position:absolute; inset:0; background:linear-gradient(180deg,rgba(21,16,12,.6),rgba(21,16,12,.82)); z-index:1; }
@@ -300,12 +301,16 @@ strong{ font-weight:600; }
 .phero-media--slideshow img:nth-child(1){ animation-delay:0s; }
 .phero-media--slideshow img:nth-child(2){ animation-delay:6s; }
 @keyframes pheroFade{ 0%{opacity:0} 4%{opacity:.42} 46%{opacity:.42} 50%{opacity:0} 100%{opacity:0} }
+/* 3 görsellik varyant (Workshoplar hero) — 6sn/görsel, 18sn döngü */
+.phero-media--slideshow--3 img{ animation-name:pheroFade3; animation-duration:18s; }
+.phero-media--slideshow--3 img:nth-child(3){ animation-delay:12s; }
+@keyframes pheroFade3{ 0%{opacity:0} 3%{opacity:.42} 30%{opacity:.42} 33%{opacity:0} 100%{opacity:0} }
 @media (prefers-reduced-motion:reduce){
   .phero-media--slideshow img{ animation:none; opacity:0; }
   .phero-media--slideshow img:first-child{ opacity:.42; }
 }
 .phero .wrap{ position:relative; z-index:2; }
-.phero h1{ color:#fff; font-size:var(--step-4); max-width:18ch; margin-top:.6rem; }
+.phero h1{ color:#fff; font-size:var(--step-4); max-width:26ch; margin-top:.6rem; }
 .phero .lead{ color:#e7dcc7; margin-top:1.1rem; }
 .phero .eyebrow{ color:var(--clay-soft); }
 .phero .eyebrow::before{ background:var(--clay-soft); }
@@ -410,6 +415,13 @@ strong{ font-weight:600; }
 .course-card .media--slideshow--7 img:nth-child(6){ animation-delay:20s; }
 .course-card .media--slideshow--7 img:nth-child(7){ animation-delay:24s; }
 @keyframes cardFade7{ 0%{opacity:0} 1.6%{opacity:1} 12.6%{opacity:1} 14.2%{opacity:0} 100%{opacity:0} }
+/* 8 görsellik varyant (Yetişkin Seramik Atölyesi kartı) — 4sn/görsel, 32sn döngü */
+.course-card .media--slideshow--8 img{ animation-name:cardFade8; animation-duration:32s; }
+.course-card .media--slideshow--8 img:nth-child(5){ animation-delay:16s; }
+.course-card .media--slideshow--8 img:nth-child(6){ animation-delay:20s; }
+.course-card .media--slideshow--8 img:nth-child(7){ animation-delay:24s; }
+.course-card .media--slideshow--8 img:nth-child(8){ animation-delay:28s; }
+@keyframes cardFade8{ 0%{opacity:0} 1.2%{opacity:1} 11.3%{opacity:1} 12.5%{opacity:0} 100%{opacity:0} }
 @media (prefers-reduced-motion:reduce){
   .course-card .media--slideshow img{ animation:none; opacity:0; }
   .course-card .media--slideshow img:first-child{ opacity:1; }
@@ -754,10 +766,11 @@ fieldset legend{ padding:0 .6em; font-family:var(--serif); font-size:var(--step-
 .submenu a, .site-header:not(.scrolled) .submenu a{ background:none; -webkit-text-fill-color:#7a5418; color:#7a5418; }
 .submenu a:hover, .site-header:not(.scrolled) .submenu a:hover{ -webkit-text-fill-color:#a87b2e; color:#a87b2e; background:var(--sand); }
 .submenu-label{ color:#9a8a6e; }
-/* mobile panel (cream) → solid deep gold for readability */
+/* mobile panel is transparent over the dark scrim → keep the bright shimmering gilt text (inherited from the rule above); only the plain-color submenu needs its own light tone */
 @media (max-width:1040px){
-  .nav-menu > a, .has-sub > a{ background:none; -webkit-text-fill-color:#7a5418; color:#7a5418; }
-  .nav-menu > a:hover, .nav-menu > a[aria-current="page"]{ background:none; -webkit-text-fill-color:#a87b2e; }
+  .submenu a{ background:none; -webkit-text-fill-color:var(--gold-soft); color:var(--gold-soft); }
+  .submenu a:hover{ -webkit-text-fill-color:#fff; color:#fff; background:none; }
+  .submenu-label{ color:#cab89c; }
 }
 /* header CTA → gilded gold button (both states) */
 .nav-cta .btn{ background:var(--gold-grad-btn); background-size:200% auto; color:#231804; box-shadow:0 10px 22px -12px rgba(199,154,82,.5); }
@@ -855,6 +868,7 @@ fieldset legend{ padding:0 .6em; font-family:var(--serif); font-size:var(--step-
 .site-header .nav-cta .btn{
   position:relative; overflow:hidden; isolation:isolate;
   --bg:transparent;
+  padding:.6em 1.25em; font-size:var(--step--2);
   color:#3a2708; font-weight:800; letter-spacing:.02em;
   background:linear-gradient(100deg,
     #9c6a22 0%, #caa047 22%, #f6dc94 42%, #fff3cf 50%,
@@ -957,4 +971,68 @@ fieldset legend{ padding:0 .6em; font-family:var(--serif); font-size:var(--step-
   .brand{ transition:none; }
   .brand:hover{ transform:none; }
   .brand .logo-gilt{ transition:filter .3s var(--ease); }
+}
+
+/* =================================================================
+   MOBILE — CENTERED CONTENT (buttons & text)
+   Long-form reading text (.article) and icon-prefixed lists (checklists,
+   contact info rows, pricing feature lists) stay left-aligned — centering
+   those hurts readability and breaks the icon layout.
+   ================================================================= */
+@media (max-width:640px){
+  /* home hero */
+  .hero-inner{ text-align:center; }
+  .hero h1,.hero .lead{ margin-inline:auto; }
+  .hero-actions{ justify-content:center; }
+  .hero-stats{ justify-content:center; align-items:center; }
+  .hero-stats > div{ text-align:center; }
+
+  /* inner page hero */
+  .phero .wrap{ text-align:center; }
+  .phero h1,.phero .lead{ margin-inline:auto; }
+  .crumbs{ justify-content:center; }
+  .phero .hero-actions{ justify-content:center; }
+
+  /* section headers everywhere */
+  .section-head{ text-align:center; margin-inline:auto; }
+  .section-head .lead{ margin-inline:auto; }
+
+  /* editorial split blocks */
+  .split-content{ text-align:center; }
+  .split-content .eyebrow{ justify-content:center; }
+  .split-content .checks{ text-align:left; }
+  .split-content .hero-actions{ justify-content:center; }
+  .badge{ left:50%; right:auto; transform:translateX(-50%); }
+
+  /* feature / course / post / price cards */
+  .feature{ text-align:center; }
+  .feature.ico{ text-align:center; }
+  .feature .ico,.feature > svg{ margin-inline:auto; }
+  .course-card .body,.post-card .body{ text-align:center; align-items:center; }
+  .price-card{ text-align:center; }
+  .price-card ul{ text-align:left; }
+
+  /* testimonials */
+  .quote-card{ text-align:center; }
+  .quote-card::before{ left:50%; transform:translateX(-50%); }
+  .quote-foot{ justify-content:center; }
+
+  /* contact info rows stay left (icon + text pairs) */
+  .info-list{ text-align:left; }
+
+  /* footer CTA + footer columns */
+  .footer-form-wrap{ justify-content:center; text-align:center; }
+  .ff-copy{ text-align:center; }
+  .ff-actions{ justify-content:center; }
+  .footer-grid{ text-align:center; }
+  .footer-brand img,.footer-brand .logo-gilt{ margin-inline:auto; }
+  .footer-links{ justify-items:center; }
+  .footer-social{ justify-content:center; }
+  .footer-bottom{ justify-content:center; text-align:center; }
+
+  /* generic single/grouped CTA buttons wrapped in a paragraph or div */
+  p:has(> .btn:only-child),
+  .mt-1:has(> .btn:only-child),
+  .mt-2:has(> .btn:only-child),
+  .mt-3:has(> .btn:only-child){ text-align:center; }
 }
