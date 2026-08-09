@@ -235,21 +235,26 @@ strong{ font-weight:600; }
   .nav-toggle{ display:block; }
   .nav-cta{ margin-left:auto; }
   .nav-menu{
-    position:fixed; inset:0 0 0 auto; width:max-content; max-width:86vw;
+    position:fixed; inset:5.2rem 1rem auto auto; left:auto; width:max-content; max-width:86vw;
+    max-height:calc(100svh - 6.4rem);
     flex-direction:column; align-items:stretch; gap:.1rem; margin:0;
     text-align:right;
-    background:transparent; padding:6rem 1.8rem 2rem 2.6rem; overflow-y:auto;
-    transform:translateX(100%); transition:transform .5s var(--ease);
-    box-shadow:none; z-index:var(--z-menu);
+    background:rgba(10,8,6,.92); backdrop-filter:blur(16px) saturate(1.15);
+    border:1px solid rgba(226,186,92,.16); border-radius:18px;
+    padding:1rem 1.4rem 1.1rem 1.8rem; overflow-y:auto;
+    transform:translateX(calc(100% + 1rem)); transition:transform .5s var(--ease), opacity .4s var(--ease);
+    opacity:0; box-shadow:var(--shadow-lg); z-index:var(--z-menu);
   }
-  .nav-open .nav-menu{ transform:translateX(0); }
-  .nav-menu > a, .has-sub > a{ padding:.85em .6em; font-size:1.05rem; border-bottom:1px solid rgba(255,255,255,.14); border-radius:0; white-space:nowrap; }
+  .nav-open .nav-menu{ transform:translateX(0); opacity:1; }
+  .nav-menu > a, .has-sub > a{ padding:.75em .6em; font-size:1.05rem; border-bottom:1px solid rgba(255,255,255,.14); border-radius:0; white-space:nowrap; }
+  .nav-menu > a:last-child, .has-sub:last-child > a{ border-bottom:none; }
   .nav-menu a::after{ display:none; }
   .has-sub > a::before{ display:none; }
   .submenu{ position:static; transform:none; opacity:1; visibility:visible; box-shadow:none; border:none; background:transparent; padding:.2rem 1rem .6rem 0; min-width:0; }
   .submenu a{ padding:.6em; white-space:nowrap; }
-  .nav-scrim{ position:fixed; inset:0; background:rgba(10,8,6,.64); backdrop-filter:blur(6px); opacity:0; visibility:hidden; transition:.4s; z-index:var(--z-overlay); }
-  .nav-open .nav-scrim{ opacity:1; visibility:visible; }
+  /* invisible click-outside-to-close catcher — no dimming/blur of the page itself */
+  .nav-scrim{ position:fixed; inset:0; background:transparent; opacity:0; visibility:hidden; transition:visibility .4s; z-index:var(--z-overlay); }
+  .nav-open .nav-scrim{ visibility:visible; }
 }
 @media (max-width:400px){ .nav-cta .btn{ padding:.55em 1em; font-size:var(--step--2); } }
 
