@@ -704,6 +704,12 @@ fieldset legend{ padding:0 .6em; font-family:var(--serif); font-size:var(--step-
 .footer-links a,.footer-links p{ font-size:var(--step--1); color:#bbab93; transition:color .25s; line-height:1.5; }
 .footer-links a:hover{ color:#fff; }
 .footer-bottom{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:.8rem; padding-top:1.8rem; font-size:.8rem; color:#9c8c74; }
+.design-credit{ text-align:center; margin-top:1.5rem; padding-top:1.4rem; border-top:1px solid rgba(255,255,255,.08); }
+.design-credit a{ display:inline-block; }
+.design-credit img{ height:34px; width:auto; margin:0 auto .5rem; display:block; transition:transform .25s var(--ease); }
+.design-credit span{ display:block; color:#9c8c74; font-size:.76rem; letter-spacing:.03em; transition:color .25s; }
+.design-credit a:hover img{ transform:translateY(-2px); }
+.design-credit a:hover span{ color:var(--gold-soft); }
 
 /* WhatsApp float */
 .wa-float{ position:fixed; right:1.2rem; bottom:1.2rem; z-index:var(--z-float); width:58px; height:58px; border-radius:50%; background:#1faf54; color:#fff; display:grid; place-items:center; box-shadow:0 14px 30px -10px rgba(31,175,84,.6); transition:transform .35s var(--ease); }
