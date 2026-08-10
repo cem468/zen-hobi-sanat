@@ -169,20 +169,25 @@
       var btn = $("button[type=submit]", form);
       if (btn) { btn.disabled = true; btn.textContent = "Gönderiliyor…"; }
 
+      var fd = new FormData(form);
+
+      var onSuccess = function () {
+        if (msg) { msg.classList.add("show"); }
+        form.dispatchEvent(new CustomEvent("formsuccess", { detail: { formData: fd } }));
+        form.reset();
+        if (msg) msg.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+      };
+
       var action = form.getAttribute("action") || "";
       // no real endpoint configured → graceful demo success
       if (!action || /YOUR_FORM_ID/i.test(action)) {
-        setTimeout(function () {
-          if (msg) { msg.classList.add("show"); }
-          form.reset(); restore(btn);
-          if (msg) msg.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
-        }, 700);
+        setTimeout(function () { onSuccess(); restore(btn); }, 700);
         return;
       }
 
       fetch(action, {
         method: (form.getAttribute("method") || "POST").toUpperCase(),
-        body: new FormData(form),
+        body: fd,
         headers: { "Accept": "application/json" }
       })
         .then(function (res) {
@@ -192,9 +197,7 @@
         })
         .then(function (r) {
           if (r.ok && (r.data.success === undefined || r.data.success)) {
-            if (msg) { msg.classList.add("show"); }
-            form.reset();
-            if (msg) msg.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+            onSuccess();
           } else {
             throw new Error((r.data && r.data.message) || "Gönderilemedi");
           }

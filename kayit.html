@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=49">
+<link rel="stylesheet" href="assets/css/style.css?v=52">
 </head>
 <body>
 <div class="fx-grain" aria-hidden="true"></div>
@@ -79,10 +79,12 @@
   <div class="wrap">
     <div class="form-card" style="max-width:46rem;margin:0 auto" data-reveal>
       <form data-form id="kayitForm" action="https://api.web3forms.com/submit" method="POST">
-        <input type="hidden" name="access_key" value="5e8c0ba3-06d2-4088-9ea0-a0479f1edd93">
+        <input type="hidden" name="access_key" value="63fc186e-5d04-4826-aa62-7f61a6647930">
         <input type="hidden" name="subject" value="Zen Hobi Sanat — Yeni Kurs Başvurusu">
         <input type="hidden" name="basvuru_dokumani" id="basvuruDokumani">
         <div class="form-success">Başvurunuz alındı! En kısa sürede sizi arayıp uygun atölye, gün ve saati birlikte planlayacağız.</div>
+        <p class="pdf-note form-note" hidden>📄 Başvurunuzun PDF kopyası bilgisayarınıza indirildi — WhatsApp'tan paylaşmak isterseniz bu dosyayı kullanabilirsiniz.</p>
+        <div class="wa-confirm" hidden></div>
 
         <fieldset class="kayit-tipi">
           <legend>Kayıt kimin için?</legend>
@@ -279,7 +281,10 @@
 <script src="assets/js/vendor/gsap.min.js" defer></script>
 <script src="assets/js/vendor/ScrollTrigger.min.js" defer></script>
 <script src="assets/js/vendor/motion.umd.js" defer></script>
-<script src="assets/js/main.js?v=7" defer></script>
+<script src="assets/js/vendor/jspdf.umd.min.js" defer></script>
+<script src="assets/js/vendor/roboto-tr-font.js" defer></script>
+<script src="assets/js/vendor/logo-b64.js" defer></script>
+<script src="assets/js/main.js?v=9" defer></script>
 <script src="assets/js/motion-fx.js?v=2" defer></script>
 
 <!-- Koşullu kayıt formu: yetişkin / çocuk seçimine göre alanları göster + gönderime dahil et -->
@@ -418,6 +423,141 @@
     var docField = form.querySelector('#basvuruDokumani');
     if (docField) docField.value = buildDocument();
   }, true);
+
+  // Gönderim başarılı olunca: aynı verilerden A4 ölçüsünde bir PDF üretip
+  // otomatik indirir (main.js'teki "formsuccess" olayını dinler).
+  function buildPDF() {
+    var jsPDF = window.jspdf && window.jspdf.jsPDF;
+    if (!jsPDF) return null;
+    var doc = new jsPDF({ unit: 'mm', format: 'a4' });
+    var pageW = 210, pageH = 297, marginX = 20, bottomLimit = pageH - 22, y = 24;
+    var contentW = pageW - marginX * 2;
+
+    // Türkçe karakterleri (ı, İ, ş, ğ) doğru göstermek için Roboto gömülü fontu kullan;
+    // yüklenemezse (ör. script henüz gelmediyse) sessizce Helvetica'ya düş.
+    var FONT = 'helvetica';
+    if (window.ROBOTO_TR_REGULAR_B64 && window.ROBOTO_TR_BOLD_B64) {
+      try {
+        doc.addFileToVFS('Roboto-Regular.ttf', window.ROBOTO_TR_REGULAR_B64);
+        doc.addFont('Roboto-Regular.ttf', 'RobotoTR', 'normal');
+        doc.addFileToVFS('Roboto-Bold.ttf', window.ROBOTO_TR_BOLD_B64);
+        doc.addFont('Roboto-Bold.ttf', 'RobotoTR', 'bold');
+        FONT = 'RobotoTR';
+      } catch (e) { FONT = 'helvetica'; }
+    }
+
+    function ensureSpace(need) {
+      if (y + need > bottomLimit) { doc.addPage(); y = 24; }
+    }
+
+    if (window.ZEN_LOGO_PNG_B64) {
+      var logoW = 34, logoH = logoW * (253 / 520);
+      doc.addImage(window.ZEN_LOGO_PNG_B64, 'PNG', marginX, y - 6, logoW, logoH);
+      y += logoH + 2;
+    } else {
+      doc.setFont(FONT, 'bold'); doc.setFontSize(17);
+      doc.text('ZEN HOBİ SANAT', marginX, y); y += 7;
+    }
+    doc.setFont(FONT, 'normal'); doc.setFontSize(11); doc.setTextColor(40);
+    doc.text('Kurs Başvuru Formu', marginX, y); y += 7;
+    doc.setDrawColor(190); doc.line(marginX, y, pageW - marginX, y); y += 8;
+
+    var kayitTipi = (form.querySelector('input[name="kayit_tipi"]:checked') || {}).value || '';
+    var now = new Date();
+    var tarih = now.toLocaleDateString('tr-TR') + ' ' + now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+    doc.setFontSize(10); doc.setTextColor(60);
+    doc.text('Başvuru Tarihi: ' + tarih, marginX, y); y += 5.5;
+    doc.text('Kayıt Türü: ' + kayitTipi, marginX, y); y += 9;
+
+    var fieldsets = form.querySelectorAll('#kayitDetay fieldset');
+    for (var f = 0; f < fieldsets.length; f++) {
+      var fs = fieldsets[f];
+      var legend = fs.querySelector('legend');
+      if (!legend) continue;
+      var rows = [];
+      var ctrls = fs.querySelectorAll('input, select, textarea');
+      for (var c = 0; c < ctrls.length; c++) {
+        var el = ctrls[c];
+        if (el.disabled || el.type === 'radio' || el.type === 'checkbox') continue;
+        var val = (el.value || '').trim();
+        if (!val) continue;
+        rows.push([fieldLabel(el), val]);
+      }
+      if (!rows.length) continue;
+
+      ensureSpace(12);
+      doc.setFont(FONT, 'bold'); doc.setFontSize(11); doc.setTextColor(20);
+      doc.text(legend.textContent.trim().toLocaleUpperCase('tr-TR'), marginX, y); y += 2;
+      doc.setDrawColor(215); doc.line(marginX, y, pageW - marginX, y); y += 5.5;
+      doc.setFont(FONT, 'normal'); doc.setFontSize(10); doc.setTextColor(60);
+
+      for (var i = 0; i < rows.length; i++) {
+        var lines = doc.splitTextToSize(rows[i][0] + ': ' + rows[i][1], contentW);
+        for (var l = 0; l < lines.length; l++) {
+          ensureSpace(5);
+          doc.text(lines[l], marginX, y); y += 5;
+        }
+      }
+      y += 4;
+    }
+
+    ensureSpace(14);
+    doc.setDrawColor(190); doc.line(marginX, y, pageW - marginX, y); y += 6;
+    doc.setFontSize(9); doc.setTextColor(120);
+    doc.text('Zen Hobi Sanat  ·  Tel: 0544 403 42 66  ·  info@zenhobisanat.com', marginX, y); y += 4.5;
+    doc.text('Bahçeşehir 2. Kısım Mah. M. Kemal Atatürk Bulvarı No:23 D:1, Başakşehir/İstanbul', marginX, y);
+
+    return doc;
+  }
+
+  form.addEventListener('formsuccess', function () {
+    try {
+      var doc = buildPDF();
+      if (!doc) return;
+      var kimAdi = (form.querySelector('#cocuk_ad') && form.querySelector('#cocuk_ad').value) || (form.querySelector('#ad_soyad') && form.querySelector('#ad_soyad').value) || 'basvuru';
+      var slug = kimAdi.toLocaleLowerCase('tr-TR')
+        .replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's').replace(/ö/g, 'o').replace(/ç/g, 'c')
+        .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'basvuru';
+      doc.save('zen-hobi-sanat-basvuru-' + slug + '.pdf');
+      var note = document.querySelector('.pdf-note');
+      if (note) note.hidden = false;
+    } catch (err) { /* PDF oluşturulamazsa sessizce geç — form gönderimi zaten tamamlandı */ }
+  });
+})();
+
+// Gönderim başarılı olunca: kişinin kendi WhatsApp'ından atölyeye hazır doldurulmuş
+// bir "kayıt oldum" mesajı yollamasını sağlayan buton (main.js'teki "formsuccess"
+// olayını dinler; olay form sıfırlanmadan önceki alan değerlerini taşır).
+(function () {
+  var form = document.getElementById('kayitForm');
+  var waBox = document.querySelector('.wa-confirm');
+  if (!form || !waBox) return;
+
+  form.addEventListener('formsuccess', function (e) {
+    var fd = e.detail.formData;
+    var tip = fd.get('kayit_tipi') || '';
+    var isCocuk = tip === 'Çocuk';
+    var ad = (isCocuk ? fd.get('cocuk_ad_soyad') : fd.get('ad_soyad')) || '';
+    var veli = isCocuk ? (fd.get('ad_soyad') || '') : '';
+    var atolye = fd.get('atolye') || '';
+    var tel = fd.get('telefon1') || '';
+
+    var lines = [
+      'Merhaba, az önce Zen Hobi Sanat sitesinden kayıt formu doldurdum ✅',
+      '',
+      (isCocuk ? 'Çocuk Adı: ' : 'Ad Soyad: ') + ad
+    ];
+    if (isCocuk && veli) lines.push('Veli: ' + veli);
+    if (atolye) lines.push('Atölye: ' + atolye);
+    if (tel) lines.push('Telefon: ' + tel);
+    lines.push('', 'Kaydımı onaylar mısınız?');
+
+    var url = 'https://wa.me/905444034266?text=' + encodeURIComponent(lines.join('\n'));
+    waBox.innerHTML = '<a class="btn btn--wa btn--block" href="' + url + '" target="_blank" rel="noopener">' +
+      '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18" style="vertical-align:-3px;margin-right:.4em"><path d="M.06 24l1.7-6.16A11.9 11.9 0 1 1 12 24a11.9 11.9 0 0 1-5.7-1.46L.06 24zM6.6 20.1l.37.22a9.9 9.9 0 1 0-3.4-3.4l.23.38-1 3.6 3.8-.8z"/><path d="M9.5 6.8c-.2-.5-.4-.5-.6-.5h-.5c-.2 0-.5.07-.7.35-.25.27-.95.93-.95 2.26 0 1.33.97 2.6 1.1 2.78.14.18 1.9 3 4.7 4.1 2.3.9 2.78.72 3.28.68.5-.05 1.6-.65 1.83-1.3.22-.63.22-1.17.16-1.28-.07-.1-.25-.17-.52-.3-.27-.14-1.6-.8-1.84-.88-.25-.1-.43-.14-.6.13-.18.27-.7.87-.85 1.05-.16.18-.3.2-.58.07-.27-.14-1.14-.42-2.17-1.34-.8-.72-1.34-1.6-1.5-1.87-.16-.27-.02-.42.12-.55.12-.12.27-.32.4-.48.14-.16.18-.27.27-.46.1-.18.05-.34-.02-.48-.07-.13-.6-1.47-.83-2z"/></svg>' +
+      'WhatsApp\'tan Onaylayın</a>';
+    waBox.hidden = false;
+  });
 })();
 </script>
 </body>
