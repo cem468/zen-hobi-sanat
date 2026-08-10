@@ -1,4 +1,6 @@
 # Local tooling / temp
-.claude/settings.local.json
+.claude/
+.agents/
+skills-lock.json
 .playwright-mcp/
 *.log

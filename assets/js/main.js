@@ -256,6 +256,26 @@
         });
       });
 
+      /* stat count-up — only for clean "N" / "N+" values (skips ranges like "4–99") */
+      $$(".statrow .num, .hero-stats .num").forEach(function (el) {
+        var m = el.textContent.trim().match(/^(\d[\d.,]*)(.*)$/);
+        if (!m || /[–-]\s*\d/.test(m[2])) return;
+        var target = parseInt(m[1].replace(/[.,]/g, ""), 10);
+        if (isNaN(target)) return;
+        var suffix = m[2];
+        el.textContent = "0" + suffix;
+        var counter = { v: 0 };
+        ScrollTrigger.create({
+          trigger: el, start: "top 85%", once: true,
+          onEnter: function () {
+            gsap.to(counter, {
+              v: target, duration: 1.4, ease: "power2.out",
+              onUpdate: function () { el.textContent = Math.round(counter.v) + suffix; }
+            });
+          }
+        });
+      });
+
       /* pinned process */
       var stage = $(".process-stage");
       var steps = $$(".process-step");

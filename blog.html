@@ -21,7 +21,27 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=53">
+<link rel="stylesheet" href="assets/css/style.css?v=64">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Ana Sayfa",
+      "item": "https://www.zenhobisanat.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Blog",
+      "item": "https://www.zenhobisanat.com/blog.html"
+    }
+  ]
+}
+</script>
 </head>
 <body>
 <div class="fx-grain" aria-hidden="true"></div>
@@ -49,8 +69,8 @@
       <a href="workshoplar.html">Workshoplar</a>
       <a href="kurumsal-etkinlikler.html">Kurumsal</a>
       <a href="firinlama.html">Fırınlama</a>
-      <a href="galeri.html">Galeri</a>
       <a href="sss.html">SSS</a>
+      <a href="yorumlar.html">Yorumlar</a>
       <a href="blog.html" aria-current="page">Blog</a>
       <a href="ik.html">İK</a>
       <a href="iletisim.html">İletişim</a>
@@ -92,12 +112,12 @@
         <div class="body">
           <span class="cat">Resim</span>
           <h3><a href="blog-pouring-art-nedir.html">Pouring Art Nedir? Akışkan Boyanın Büyülü Dünyası</a></h3>
-          <p>Hiç fırça kullanmadan etkileyici tablolar: pouring art tekniğini ve neden bu kadar sevildiğini anlattık.</p>
+          <p>Hiç fırça kullanmadan etkileyici tablolar ortaya çıkar mı? Pouring art tekniğini, dirty pour ve flip cup gibi dökme yöntemlerini ve neden bu kadar sevildiğini bu yazıda adım adım anlattık.</p>
           <div class="meta">Zen Hobi Sanat · 4 dk okuma</div>
         </div>
       </article>
       <article class="post-card" data-reveal data-delay="2">
-        <a class="media" href="blog-cocuklar-icin-sanatin-5-faydasi.html"><img src="assets/img/cocuk/cocuk-04.webp" alt="Yaratıcı çocuk atölyesinde resim yapan çocuk" loading="lazy"></a>
+        <a class="media" href="blog-cocuklar-icin-sanatin-5-faydasi.html"><img src="assets/img/cocuk/cocuk-09.webp" alt="Boyanmış seramik eserlerini gösteren iki çocuk" loading="lazy" style="object-position:center 25%"></a>
         <div class="body">
           <span class="cat">Çocuk</span>
           <h3><a href="blog-cocuklar-icin-sanatin-5-faydasi.html">Çocuklar İçin Sanatın 5 Faydası</a></h3>
@@ -115,7 +135,10 @@
         </div>
       </article>
       <article class="post-card" data-reveal data-delay="1">
-        <a class="media" href="blog-kurumsal-sanat-atolyesi.html"><img src="assets/img/workshop/workshop-05.webp" alt="Kurumsal grup halinde sanat atölyesi etkinliği" loading="lazy"></a>
+        <a class="media media--slideshow" href="blog-kurumsal-sanat-atolyesi.html">
+          <img src="assets/img/workshop/workshop-11.webp" alt="Zen Hobi Sanat önlükleriyle atölyede bir arada gülümseyen ekip" loading="lazy">
+          <img src="assets/img/workshop/workshop-12.webp" alt="Zen Hobi Sanat önlükleriyle resim yapan ekip" loading="lazy">
+        </a>
         <div class="body">
           <span class="cat">Kurumsal</span>
           <h3><a href="blog-kurumsal-sanat-atolyesi.html">Kurumsal Etkinlik Fikri: Ekibinizi Atölyede Buluşturun</a></h3>
@@ -133,7 +156,11 @@
         </div>
       </article>
       <article class="post-card" data-reveal>
-        <a class="media" href="blog-sanatin-cocuklardaki-etkileri.html"><img src="assets/img/cocuk/cocuk-06.webp" alt="Sanat atölyesinde üreten ve öğrenen çocuk" loading="lazy"></a>
+        <a class="media" href="blog-sanatin-cocuklardaki-etkileri.html">
+          <video data-autoplay muted loop playsinline preload="none" poster="assets/img/cocuk/cocuk-etkiler-poster.webp" aria-hidden="true">
+            <source src="assets/video/cocuk-etkiler.mp4" type="video/mp4">
+          </video>
+        </a>
         <div class="body">
           <span class="cat">Çocuk</span>
           <h3><a href="blog-sanatin-cocuklardaki-etkileri.html">Sanatın Çocuklar Üzerindeki Etkileri: Gelişime Katkısı</a></h3>
@@ -141,11 +168,43 @@
           <div class="meta">Zen Hobi Sanat · 5 dk okuma</div>
         </div>
       </article>
+      <article class="post-card" data-reveal data-delay="1">
+        <a class="media" href="blog-mum-yapimi-atolyesi.html"><img src="assets/img/mum/mum-01.webp" alt="El yapımı figürlü mum workshopu" loading="lazy"></a>
+        <div class="body">
+          <span class="cat">Workshop</span>
+          <h3><a href="blog-mum-yapimi-atolyesi.html">Mum Yapımı Atölyesi: Doğal Soya Mumunu Kendiniz Dökün</a></h3>
+          <p>Fitili yerleştirmekten kalıptan çıkarmaya kadar tüm süreci anlattık: doğal soya mumu nasıl dökülür, renk ve koku nasıl seçilir?</p>
+          <div class="meta">Zen Hobi Sanat · 3 dk okuma</div>
+        </div>
+      </article>
     </div>
     <p class="center mt-3" data-reveal>Güncel paylaşımlar için <a class="link-arrow" href="https://www.instagram.com/zenhobisanat" target="_blank" rel="noopener">Instagram'dan bizi takip edin <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
   </div>
 </section>
 
+
+<!-- ======================= INSTAGRAM ======================= -->
+<section class="section bg-sand insta">
+  <div class="wrap insta-inner">
+    <div class="insta-copy" data-reveal>
+      <span class="eyebrow">@zenhobisanat</span>
+      <h2 style="margin:.6rem 0 1rem">Atölyeden günlük kareler</h2>
+      <p class="lead">Yeni eserler, açılan kontenjanlar ve workshop duyuruları önce Instagram'da. Atölyenin gündelik hâline en yakın yer — gelin, oradan da tanışalım.</p>
+      <a class="btn btn--lg btn--insta mt-2" href="https://www.instagram.com/zenhobisanat" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2.2c3.2 0 3.6 0 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s0 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58 0-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.8 3.8 0 0 1-1.38-.9 3.8 3.8 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.21 15.58 2.2 15.2 2.2 12s0-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.21 8.8 2.2 12 2.2zm0 3.06A4.94 4.94 0 1 1 12 17a4.94 4.94 0 0 1 0-9.88zm0 1.8a3.14 3.14 0 1 0 0 6.28 3.14 3.14 0 0 0 0-6.28zm5.15-.96a1.15 1.15 0 1 1 0 2.3 1.15 1.15 0 0 1 0-2.3z"/></svg>
+        Instagram'da Takip Et
+      </a>
+    </div>
+    <div class="insta-tiles" data-reveal data-delay="1">
+      <a href="https://www.instagram.com/zenhobisanat" target="_blank" rel="noopener" aria-label="Instagram'da Zen Hobi Sanat"><img src="assets/img/insta/insta-01.webp" alt="Zen Hobi Sanat Instagram paylaşımı" loading="lazy"></a>
+      <a href="https://www.instagram.com/zenhobisanat" target="_blank" rel="noopener" aria-label="Instagram'da Zen Hobi Sanat"><img src="assets/img/insta/insta-02.webp" alt="Zen Hobi Sanat Instagram paylaşımı" loading="lazy"></a>
+      <a href="https://www.instagram.com/zenhobisanat" target="_blank" rel="noopener" aria-label="Instagram'da Zen Hobi Sanat"><img src="assets/img/insta/insta-03.webp" alt="Zen Hobi Sanat Instagram paylaşımı" loading="lazy"></a>
+      <a href="https://www.instagram.com/zenhobisanat" target="_blank" rel="noopener" aria-label="Instagram'da Zen Hobi Sanat"><img src="assets/img/insta/insta-04.webp" alt="Zen Hobi Sanat Instagram paylaşımı" loading="lazy"></a>
+      <a href="https://www.instagram.com/zenhobisanat" target="_blank" rel="noopener" aria-label="Instagram'da Zen Hobi Sanat"><img src="assets/img/insta/insta-05.webp" alt="Zen Hobi Sanat Instagram paylaşımı" loading="lazy"></a>
+      <a href="https://www.instagram.com/zenhobisanat" target="_blank" rel="noopener" aria-label="Instagram'da Zen Hobi Sanat"><img src="assets/img/insta/insta-06.webp" alt="Zen Hobi Sanat Instagram paylaşımı" loading="lazy"></a>
+    </div>
+  </div>
+</section>
 <!-- ======================= CTA BAND ======================= -->
 <section class="section band" style="text-align:center">
   <div class="wrap">
@@ -191,9 +250,9 @@
           <a href="hakkimizda.html">Hakkımızda</a>
           <a href="workshoplar.html">Workshoplar</a>
           <a href="kurumsal-etkinlikler.html">Kurumsal Etkinlikler</a>
-          <a href="galeri.html">Galeri</a>
           <a href="blog.html">Blog</a>
           <a href="sss.html">Sıkça Sorulan Sorular</a>
+          <a href="yorumlar.html">Google Yorumları</a>
           <a href="ik.html">İnsan Kaynakları</a>
         </div>
       </div>
@@ -221,7 +280,7 @@
 <script src="assets/js/vendor/gsap.min.js" defer></script>
 <script src="assets/js/vendor/ScrollTrigger.min.js" defer></script>
 <script src="assets/js/vendor/motion.umd.js" defer></script>
-<script src="assets/js/main.js?v=9" defer></script>
+<script src="assets/js/main.js?v=10" defer></script>
 <script src="assets/js/motion-fx.js?v=2" defer></script>
 </body>
 </html>

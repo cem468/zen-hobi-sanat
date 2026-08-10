@@ -21,7 +21,27 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=53">
+<link rel="stylesheet" href="assets/css/style.css?v=64">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Ana Sayfa",
+      "item": "https://www.zenhobisanat.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Kayıt",
+      "item": "https://www.zenhobisanat.com/kayit.html"
+    }
+  ]
+}
+</script>
 </head>
 <body>
 <div class="fx-grain" aria-hidden="true"></div>
@@ -49,8 +69,8 @@
       <a href="workshoplar.html">Workshoplar</a>
       <a href="kurumsal-etkinlikler.html">Kurumsal</a>
       <a href="firinlama.html">Fırınlama</a>
-      <a href="galeri.html">Galeri</a>
       <a href="sss.html">SSS</a>
+      <a href="yorumlar.html">Yorumlar</a>
       <a href="blog.html">Blog</a>
       <a href="ik.html">İK</a>
       <a href="iletisim.html">İletişim</a>
@@ -123,7 +143,7 @@
                 </select>
               </div>
             </div>
-            <div class="field only-adult">
+            <div class="field">
               <label for="meslek">Mesleği</label>
               <input type="text" id="meslek" name="meslek" autocomplete="organization-title">
             </div>
@@ -190,13 +210,43 @@
                 <label for="baslangic">Kurs Başlangıç Tarihi</label>
                 <input type="date" id="baslangic" name="baslangic_tarihi">
               </div>
-              <div class="field">
+              <div class="field only-adult" data-gunsaat-for="">
                 <label for="gun_saat">Tercih Ettiğiniz Gün / Saat</label>
                 <select id="gun_saat" name="gun_saat">
                   <option value="Hafta içi gündüz">Hafta içi gündüz</option>
                   <option value="Hafta içi akşam">Hafta içi akşam</option>
                   <option value="Cumartesi">Cumartesi</option>
                   <option value="Pazar">Pazar</option>
+                  <option value="Farketmez">Farketmez</option>
+                </select>
+              </div>
+              <div class="field only-adult" data-gunsaat-for="Seramik Atölyesi" hidden>
+                <label for="gun_saat_seramik">Tercih Ettiğiniz Gün / Saat</label>
+                <select id="gun_saat_seramik" name="gun_saat" disabled>
+                  <option value="Perşembe 11:00-14:00">Perşembe 11:00-14:00</option>
+                  <option value="Perşembe 18:00-21:00">Perşembe 18:00-21:00</option>
+                  <option value="Cumartesi 14:00-17:00">Cumartesi 14:00-17:00</option>
+                  <option value="Farketmez">Farketmez</option>
+                </select>
+              </div>
+              <div class="field only-adult" data-gunsaat-for="Resim Atölyesi" hidden>
+                <label for="gun_saat_resim">Tercih Ettiğiniz Gün / Saat</label>
+                <select id="gun_saat_resim" name="gun_saat" disabled>
+                  <option value="Çarşamba 14:00-17:00">Çarşamba 14:00-17:00</option>
+                  <option value="Perşembe 18:00-21:00">Perşembe 18:00-21:00</option>
+                  <option value="Cumartesi 14:00-17:00">Cumartesi 14:00-17:00</option>
+                  <option value="Farketmez">Farketmez</option>
+                </select>
+              </div>
+              <div class="field only-child">
+                <label for="gun_saat_cocuk">Tercih Ettiğiniz Gün / Saat</label>
+                <select id="gun_saat_cocuk" name="gun_saat">
+                  <option value="Pazartesi 17:00-18:30">Pazartesi 17:00-18:30</option>
+                  <option value="Perşembe 16:30-18:00">Perşembe 16:30-18:00</option>
+                  <option value="Cumartesi 11:00-12:30">Cumartesi 11:00-12:30</option>
+                  <option value="Cumartesi 12:30-14:00">Cumartesi 12:30-14:00</option>
+                  <option value="Pazar 11:00-12:30">Pazar 11:00-12:30</option>
+                  <option value="Pazar 13:00-14:30">Pazar 13:00-14:30</option>
                   <option value="Farketmez">Farketmez</option>
                 </select>
               </div>
@@ -207,7 +257,7 @@
             </div>
           </fieldset>
 
-          <div class="form-note" style="border:1px solid var(--line,#e6ddd2);border-left:3px solid var(--clay,#171717);border-radius:.6rem;padding:1rem 1.1rem;background:rgba(0,0,0,.04);margin:1.4rem 0">
+          <div id="telafiNotu" class="form-note" style="border:1px solid var(--line,#e6ddd2);border-left:3px solid var(--clay,#171717);border-radius:.6rem;padding:1rem 1.1rem;background:rgba(0,0,0,.04);margin:1.4rem 0">
             <strong>Telafi hakkınız.</strong> Katılamadığınız bir dersi, aynı ay içinde uygun olan diğer sınıflarımıza gelerek telafi edebilirsiniz. Aynı ay içinde telafi edilmeyen dersler ne yazık ki geçerliliğini yitirir. Anlayışınız için teşekkür eder, derslerinizi aksatmadan keyifle üretmenizi dileriz.
           </div>
 
@@ -215,6 +265,29 @@
           <p class="form-note">Başvurunuz bize ulaştığında en kısa sürede sizinle iletişime geçeceğiz. Dilerseniz WhatsApp'tan da yazabilirsiniz: 0544 403 42 66.</p>
         </div>
       </form>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= INSTAGRAM ======================= -->
+<section class="section bg-sand insta">
+  <div class="wrap insta-inner">
+    <div class="insta-copy" data-reveal>
+      <span class="eyebrow">@zenhobisanat</span>
+      <h2 style="margin:.6rem 0 1rem">Atölyeden günlük kareler</h2>
+      <p class="lead">Yeni eserler, açılan kontenjanlar ve workshop duyuruları önce Instagram'da. Atölyenin gündelik hâline en yakın yer — gelin, oradan da tanışalım.</p>
+      <a class="btn btn--lg btn--insta mt-2" href="https://www.instagram.com/zenhobisanat" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2.2c3.2 0 3.6 0 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s0 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58 0-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.8 3.8 0 0 1-1.38-.9 3.8 3.8 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.21 15.58 2.2 15.2 2.2 12s0-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.21 8.8 2.2 12 2.2zm0 3.06A4.94 4.94 0 1 1 12 17a4.94 4.94 0 0 1 0-9.88zm0 1.8a3.14 3.14 0 1 0 0 6.28 3.14 3.14 0 0 0 0-6.28zm5.15-.96a1.15 1.15 0 1 1 0 2.3 1.15 1.15 0 0 1 0-2.3z"/></svg>
+        Instagram'da Takip Et
+      </a>
+    </div>
+    <div class="insta-tiles" data-reveal data-delay="1">
+      <a href="https://www.instagram.com/zenhobisanat" target="_blank" rel="noopener" aria-label="Instagram'da Zen Hobi Sanat"><img src="assets/img/seramik/seramik-01.webp" alt="Zen Hobi Sanat Instagram paylaşımı" loading="lazy"></a>
+      <a href="https://www.instagram.com/zenhobisanat" target="_blank" rel="noopener" aria-label="Instagram'da Zen Hobi Sanat"><img src="assets/img/resim/resim-01.webp" alt="Zen Hobi Sanat Instagram paylaşımı" loading="lazy"></a>
+      <a href="https://www.instagram.com/zenhobisanat" target="_blank" rel="noopener" aria-label="Instagram'da Zen Hobi Sanat"><img src="assets/img/heykel/heykel-04.webp" alt="Zen Hobi Sanat Instagram paylaşımı" loading="lazy"></a>
+      <a href="https://www.instagram.com/zenhobisanat" target="_blank" rel="noopener" aria-label="Instagram'da Zen Hobi Sanat"><img src="assets/img/cocuk/cocuk-02.webp" alt="Zen Hobi Sanat Instagram paylaşımı" loading="lazy"></a>
+      <a href="https://www.instagram.com/zenhobisanat" target="_blank" rel="noopener" aria-label="Instagram'da Zen Hobi Sanat"><img src="assets/img/seramik/seramik-09.webp" alt="Zen Hobi Sanat Instagram paylaşımı" loading="lazy"></a>
+      <a href="https://www.instagram.com/zenhobisanat" target="_blank" rel="noopener" aria-label="Instagram'da Zen Hobi Sanat"><img src="assets/img/workshop/workshop-02.webp" alt="Zen Hobi Sanat Instagram paylaşımı" loading="lazy"></a>
     </div>
   </div>
 </section>
@@ -251,9 +324,9 @@
           <a href="hakkimizda.html">Hakkımızda</a>
           <a href="workshoplar.html">Workshoplar</a>
           <a href="kurumsal-etkinlikler.html">Kurumsal Etkinlikler</a>
-          <a href="galeri.html">Galeri</a>
           <a href="blog.html">Blog</a>
           <a href="sss.html">Sıkça Sorulan Sorular</a>
+          <a href="yorumlar.html">Google Yorumları</a>
           <a href="ik.html">İnsan Kaynakları</a>
         </div>
       </div>
@@ -284,7 +357,7 @@
 <script src="assets/js/vendor/jspdf.umd.min.js" defer></script>
 <script src="assets/js/vendor/roboto-tr-font.js" defer></script>
 <script src="assets/js/vendor/logo-b64.js" defer></script>
-<script src="assets/js/main.js?v=9" defer></script>
+<script src="assets/js/main.js?v=10" defer></script>
 <script src="assets/js/motion-fx.js?v=2" defer></script>
 
 <!-- Koşullu kayıt formu: yetişkin / çocuk seçimine göre alanları göster + gönderime dahil et -->
@@ -327,7 +400,29 @@
     eachGroup('.only-child', function (el) { setEnabled(el, !adult); });
 
     if (legend) legend.textContent = adult ? legend.dataset.legendAdult : legend.dataset.legendChild;
+
+    applyGunSaat(adult);
   }
+
+  // Atölyeye özel "Gün / Saat" seçenekleri: seçilen atölye için özel bir grup
+  // varsa onu göster, yoksa genel (varsayılan) gruba düş. Yalnızca yetişkin
+  // modunda geçerli — çocuk modunda bu gruplar zaten .only-adult ile gizlenir.
+  var atolyeSel = document.getElementById('atolye');
+  var gunGroups = detay.querySelectorAll('[data-gunsaat-for]');
+  function applyGunSaat(adult) {
+    if (!adult) return;
+    var val = atolyeSel ? atolyeSel.value : '';
+    var hasSpecific = false;
+    for (var i = 0; i < gunGroups.length; i++) {
+      if (gunGroups[i].dataset.gunsaatFor === val) { hasSpecific = true; break; }
+    }
+    for (var i = 0; i < gunGroups.length; i++) {
+      var g = gunGroups[i];
+      var show = hasSpecific ? (g.dataset.gunsaatFor === val) : (g.dataset.gunsaatFor === '');
+      setEnabled(g, show);
+    }
+  }
+  if (atolyeSel) atolyeSel.addEventListener('change', function () { applyGunSaat(true); });
 
   var radios = form.querySelectorAll('input[name="kayit_tipi"]');
   for (var r = 0; r < radios.length; r++) {
@@ -404,6 +499,14 @@
       for (var i = 0; i < rows.length; i++) {
         wrapInto(lines, rows[i][0] + ': ', rows[i][1]);
       }
+    }
+
+    var telafiEl = document.getElementById('telafiNotu');
+    if (telafiEl) {
+      lines.push('');
+      lines.push('TELAFİ HAKKINIZ');
+      lines.push('---------------');
+      wrapInto(lines, '', telafiEl.textContent.trim().replace(/\s+/g, ' '));
     }
 
     lines.push('');
@@ -497,6 +600,21 @@
           ensureSpace(5);
           doc.text(lines[l], marginX, y); y += 5;
         }
+      }
+      y += 4;
+    }
+
+    var telafiEl = document.getElementById('telafiNotu');
+    if (telafiEl) {
+      ensureSpace(12);
+      doc.setFont(FONT, 'bold'); doc.setFontSize(11); doc.setTextColor(20);
+      doc.text('TELAFİ HAKKINIZ', marginX, y); y += 2;
+      doc.setDrawColor(215); doc.line(marginX, y, pageW - marginX, y); y += 5.5;
+      doc.setFont(FONT, 'normal'); doc.setFontSize(10); doc.setTextColor(60);
+      var telafiLines = doc.splitTextToSize(telafiEl.textContent.trim().replace(/\s+/g, ' '), contentW);
+      for (var t = 0; t < telafiLines.length; t++) {
+        ensureSpace(5);
+        doc.text(telafiLines[t], marginX, y); y += 5;
       }
       y += 4;
     }
