@@ -8,6 +8,23 @@
     apiKey: 'AIzaSyCRw-bdAFNSMEORfoYfE-nJLMTQHuRAQtU'
   };
 
+  var isEn = document.documentElement.lang === 'en';
+  var STR = isEn ? {
+    reviewCount: ' Google reviews',
+    noReviews: 'No reviews to show yet.',
+    anonUser: 'Google User',
+    fallbackTime: 'Google Review',
+    error: 'Reviews could not be loaded right now. Please try again later or visit our Google page.',
+    pending: 'Google reviews coming soon — connection is being set up.'
+  } : {
+    reviewCount: ' Google değerlendirmesi',
+    noReviews: 'Henüz görüntülenecek yorum yok.',
+    anonUser: 'Google Kullanıcısı',
+    fallbackTime: 'Google Yorumu',
+    error: 'Yorumlar şu anda yüklenemedi. Lütfen daha sonra tekrar deneyin ya da Google\'daki sayfamızı ziyaret edin.',
+    pending: 'Google yorumları yakında burada — bağlantı kurulum aşamasında.'
+  };
+
   var summaryEl = document.getElementById('gr-summary');
   var listEl = document.getElementById('gr-reviews');
   var linkEl = document.getElementById('gr-all-link');
@@ -34,40 +51,44 @@
     summaryEl.innerHTML =
       '<div class="gr-score">' + esc(data.rating != null ? data.rating.toFixed(1) : '–') + '</div>' +
       '<span class="stars">' + starString(data.rating) + '</span>' +
-      '<div class="gr-count">' + esc(data.userRatingCount || 0) + ' Google değerlendirmesi</div>';
+      '<div class="gr-count">' + esc(data.userRatingCount || 0) + STR.reviewCount + '</div>';
   }
 
   function renderReviews(reviews){
     listEl.innerHTML = '';
     if(!reviews || !reviews.length){
-      listEl.innerHTML = '<div class="gr-state">Henüz görüntülenecek yorum yok.</div>';
+      listEl.innerHTML = '<div class="gr-state">' + STR.noReviews + '</div>';
       return;
     }
     reviews.slice(0, 5).forEach(function(r, i){
-      var text = (r.originalText && r.originalText.text) || (r.text && r.text.text) || '';
-      var name = (r.authorAttribution && r.authorAttribution.displayName) || 'Google Kullanıcısı';
+      var text = isEn
+        ? ((r.text && r.text.text) || (r.originalText && r.originalText.text) || '')
+        : ((r.originalText && r.originalText.text) || (r.text && r.text.text) || '');
+      var name = (r.authorAttribution && r.authorAttribution.displayName) || STR.anonUser;
       var card = document.createElement('div');
       card.className = 'quote-card';
       card.innerHTML =
         '<span class="stars">' + starString(r.rating) + '</span>' +
         '<p>' + esc(text) + '</p>' +
-        '<div class="quote-foot"><span class="av">' + esc(initials(name)) + '</span><div><div class="nm">' + esc(name) + '</div><div class="rl">' + esc(r.relativePublishTimeDescription || 'Google Yorumu') + '</div></div></div>';
+        '<div class="quote-foot"><span class="av">' + esc(initials(name)) + '</span><div><div class="nm">' + esc(name) + '</div><div class="rl">' + esc(r.relativePublishTimeDescription || STR.fallbackTime) + '</div></div></div>';
       listEl.appendChild(card);
     });
   }
 
   function showError(){
     summaryEl.innerHTML = '';
-    listEl.innerHTML = '<div class="gr-state">Yorumlar şu anda yüklenemedi. Lütfen daha sonra tekrar deneyin ya da Google\'daki sayfamızı ziyaret edin.</div>';
+    listEl.innerHTML = '<div class="gr-state">' + STR.error + '</div>';
   }
 
   if(!CONFIG.placeId || CONFIG.placeId === 'YOUR_PLACE_ID' || !CONFIG.apiKey || CONFIG.apiKey === 'YOUR_API_KEY'){
     summaryEl.innerHTML = '';
-    listEl.innerHTML = '<div class="gr-state">Google yorumları yakında burada — bağlantı kurulum aşamasında.</div>';
+    listEl.innerHTML = '<div class="gr-state">' + STR.pending + '</div>';
     return;
   }
 
-  fetch('https://places.googleapis.com/v1/places/' + encodeURIComponent(CONFIG.placeId), {
+  var detailsUrl = 'https://places.googleapis.com/v1/places/' + encodeURIComponent(CONFIG.placeId) + (isEn ? '?languageCode=en' : '');
+
+  fetch(detailsUrl, {
     headers: {
       'X-Goog-Api-Key': CONFIG.apiKey,
       'X-Goog-FieldMask': 'displayName,rating,userRatingCount,reviews,googleMapsUri'

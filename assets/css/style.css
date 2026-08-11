@@ -220,6 +220,9 @@ strong{ font-weight:600; }
 .submenu a:hover{ background:var(--sand); color:var(--clay); }
 .submenu-label{ display:block; padding:.7em .8em .3em; font-weight:700; font-size:.66rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); }
 .nav-cta{ display:flex; align-items:center; gap:.7rem; flex:0 0 auto; }
+.lang-switch{ font-weight:700; font-size:var(--step--2); letter-spacing:.05em; color:var(--ink-soft); padding:.5em .85em; border:1px solid var(--line); border-radius:999px; transition:border-color .2s,color .2s; }
+.lang-switch:hover{ border-color:var(--gold); color:var(--gold); }
+.lang-switch::after{ display:none; }
 .nav-toggle{ display:none; width:46px; height:46px; border:1px solid var(--line); background:var(--surface); border-radius:12px; cursor:pointer; position:relative; }
 .nav-toggle span,.nav-toggle span::before,.nav-toggle span::after{
   content:""; position:absolute; left:50%; top:50%; width:20px; height:2px; background:var(--ink);
