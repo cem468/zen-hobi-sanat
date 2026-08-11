@@ -269,7 +269,14 @@ strong{ font-weight:600; }
 
 @media (max-width:1040px){
   .nav-toggle{ display:block; }
-  .nav-cta{ margin-left:auto; }
+  .nav-cta{ margin-left:auto; gap:.4rem; }
+  .brand .logo-gilt{ width:clamp(120px,15vw,150px); height:clamp(40px,4.2vw,48px); }
+  .lang-switch{
+    padding:.2em 0; font-size:.72rem; letter-spacing:0;
+    background:none; border:none; box-shadow:none; color:var(--gold);
+    animation:none;
+  }
+  .lang-switch::after{ display:none; }
   .nav-menu{
     position:fixed; inset:5.2rem 1rem auto auto; left:auto; width:max-content; max-width:86vw;
     max-height:calc(100svh - 6.4rem);
@@ -292,7 +299,11 @@ strong{ font-weight:600; }
   .nav-scrim{ position:fixed; inset:0; background:transparent; opacity:0; visibility:hidden; transition:visibility .4s; z-index:var(--z-overlay); }
   .nav-open .nav-scrim{ visibility:visible; }
 }
-@media (max-width:400px){ .nav-cta .btn{ padding:.55em 1em; font-size:var(--step--2); } }
+@media (max-width:400px){
+  .nav-cta .btn{ padding:.55em .9em; font-size:.72rem; }
+  .lang-switch{ font-size:.66rem; }
+  .brand .logo-gilt{ width:110px; height:37px; }
+}
 
 /* =================================================================
    HERO
