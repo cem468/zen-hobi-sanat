@@ -272,8 +272,10 @@ strong{ font-weight:600; }
   .nav-cta{ margin-left:auto; gap:.4rem; }
   .brand .logo-gilt{ width:clamp(120px,15vw,150px); height:clamp(40px,4.2vw,48px); }
   .lang-switch{
-    padding:.2em 0; font-size:.72rem; letter-spacing:0;
-    background:none; border:none; box-shadow:none; color:var(--gold);
+    padding:.32em .58em; font-size:.7rem; letter-spacing:.02em;
+    background:var(--gold-grad-btn); border:none; border-radius:999px;
+    color:#231804; font-weight:800;
+    box-shadow:0 3px 8px -3px rgba(199,154,82,.7);
     animation:none;
   }
   .lang-switch::after{ display:none; }
@@ -300,9 +302,10 @@ strong{ font-weight:600; }
   .nav-open .nav-scrim{ visibility:visible; }
 }
 @media (max-width:400px){
-  .nav-cta .btn{ padding:.55em .9em; font-size:.72rem; }
-  .lang-switch{ font-size:.66rem; }
-  .brand .logo-gilt{ width:110px; height:37px; }
+  .nav-cta{ gap:.28rem; }
+  .nav-cta .btn{ padding:.46em .62em; font-size:.63rem; }
+  .lang-switch{ padding:.26em .42em; font-size:.6rem; }
+  .brand .logo-gilt{ width:92px; height:31px; }
 }
 
 /* =================================================================
