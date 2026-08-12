@@ -736,7 +736,11 @@
       var slug = kimAdi.toLocaleLowerCase('tr-TR')
         .replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's').replace(/ö/g, 'o').replace(/ç/g, 'c')
         .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'application';
-      doc.save('zen-hobi-sanat-registration-' + (lastBasvuruNo ? lastBasvuruNo + '-' : '') + new Date().toISOString().slice(0, 10) + '-' + slug + '.pdf');
+      var pdfFilename = 'zen-hobi-sanat-registration-' + (lastBasvuruNo ? lastBasvuruNo + '-' : '') + new Date().toISOString().slice(0, 10) + '-' + slug + '.pdf';
+      doc.save(pdfFilename);
+      // Store the blob somewhere the WhatsApp share button (separate script
+      // below) can access it.
+      try { window.__zenPdfBlob = doc.output('blob'); window.__zenPdfFilename = pdfFilename; } catch (e2) {}
       var note = document.querySelector('.pdf-note');
       if (note) note.hidden = false;
     } catch (err) { /* silently skip if PDF generation fails — the form submission has already succeeded */ }
@@ -771,10 +775,33 @@
     if (tel) lines.push('Phone: ' + tel);
     lines.push('', 'Could you please confirm my registration?');
 
-    var url = 'https://wa.me/905444034266?text=' + encodeURIComponent(lines.join('\n'));
-    waBox.innerHTML = '<a class="btn btn--wa btn--block" href="' + url + '" target="_blank" rel="noopener">' +
-      '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18" style="vertical-align:-3px;margin-right:.4em"><path d="M.06 24l1.7-6.16A11.9 11.9 0 1 1 12 24a11.9 11.9 0 0 1-5.7-1.46L.06 24zM6.6 20.1l.37.22a9.9 9.9 0 1 0-3.4-3.4l.23.38-1 3.6 3.8-.8z"/><path d="M9.5 6.8c-.2-.5-.4-.5-.6-.5h-.5c-.2 0-.5.07-.7.35-.25.27-.95.93-.95 2.26 0 1.33.97 2.6 1.1 2.78.14.18 1.9 3 4.7 4.1 2.3.9 2.78.72 3.28.68.5-.05 1.6-.65 1.83-1.3.22-.63.22-1.17.16-1.28-.07-.1-.25-.17-.52-.3-.27-.14-1.6-.8-1.84-.88-.25-.1-.43-.14-.6.13-.18.27-.7.87-.85 1.05-.16.18-.3.2-.58.07-.27-.14-1.14-.42-2.17-1.34-.8-.72-1.34-1.6-1.5-1.87-.16-.27-.02-.42.12-.55.12-.12.27-.32.4-.48.14-.16.18-.27.27-.46.1-.18.05-.34-.02-.48-.07-.13-.6-1.47-.83-2z"/></svg>' +
-      'Confirm via WhatsApp</a>';
+    var waIcon = '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18" style="vertical-align:-3px;margin-right:.4em"><path d="M.06 24l1.7-6.16A11.9 11.9 0 1 1 12 24a11.9 11.9 0 0 1-5.7-1.46L.06 24zM6.6 20.1l.37.22a9.9 9.9 0 1 0-3.4-3.4l.23.38-1 3.6 3.8-.8z"/><path d="M9.5 6.8c-.2-.5-.4-.5-.6-.5h-.5c-.2 0-.5.07-.7.35-.25.27-.95.93-.95 2.26 0 1.33.97 2.6 1.1 2.78.14.18 1.9 3 4.7 4.1 2.3.9 2.78.72 3.28.68.5-.05 1.6-.65 1.83-1.3.22-.63.22-1.17.16-1.28-.07-.1-.25-.17-.52-.3-.27-.14-1.6-.8-1.84-.88-.25-.1-.43-.14-.6.13-.18.27-.7.87-.85 1.05-.16.18-.3.2-.58.07-.27-.14-1.14-.42-2.17-1.34-.8-.72-1.34-1.6-1.5-1.87-.16-.27-.02-.42.12-.55.12-.12.27-.32.4-.48.14-.16.18-.27.27-.46.1-.18.05-.34-.02-.48-.07-.13-.6-1.47-.83-2z"/></svg>';
+    var waText = lines.join('\n');
+    var url = 'https://wa.me/905444034266?text=' + encodeURIComponent(waText);
+
+    // On mobile browsers that support file sharing, offer a button that
+    // shares the PDF directly to the system share sheet (WhatsApp included);
+    // otherwise (mostly desktop) fall back to the text-only wa.me link.
+    var pdfFile = null;
+    try {
+      if (window.__zenPdfBlob && window.navigator.canShare) {
+        var candidate = new File([window.__zenPdfBlob], window.__zenPdfFilename || 'registration.pdf', { type: 'application/pdf' });
+        if (navigator.canShare({ files: [candidate] })) pdfFile = candidate;
+      }
+    } catch (e3) { pdfFile = null; }
+
+    if (pdfFile) {
+      waBox.innerHTML = '<button type="button" class="btn btn--wa btn--block" id="waShareBtn">' + waIcon + 'Confirm via WhatsApp with PDF</button>' +
+        '<p class="form-note" style="text-align:center;margin-top:.6rem">Choose WhatsApp from the share menu that opens to send it to us.</p>';
+      var shareBtn = document.getElementById('waShareBtn');
+      if (shareBtn) {
+        shareBtn.addEventListener('click', function () {
+          navigator.share({ files: [pdfFile], text: waText, title: 'Zen Hobi Sanat Registration' }).catch(function () { /* user canceled or share failed — ignore silently */ });
+        });
+      }
+    } else {
+      waBox.innerHTML = '<a class="btn btn--wa btn--block" href="' + url + '" target="_blank" rel="noopener">' + waIcon + 'Confirm via WhatsApp</a>';
+    }
     waBox.hidden = false;
   });
 })();
