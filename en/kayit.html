@@ -476,14 +476,19 @@
     return html;
   }
 
-  function buildDocument() {
+  function buildDocument(basvuruNo) {
     var kayitTipi = (form.querySelector('input[name="kayit_tipi"]:checked') || {}).value || '';
     var now = new Date();
     var tarih = now.toLocaleDateString('en-GB') + ' ' + now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 
     var out = '<div style="max-width:600px;margin:0 auto;font-family:Arial,Helvetica,sans-serif">';
-    out += '<div style="font-size:19px;font-weight:bold;color:' + GOLD_DEEP + ';font-family:Georgia,serif">ZEN HOBİ SANAT</div>';
-    out += '<div style="font-size:13px;color:' + MUTED + ';margin:2px 0 10px">Course Application Form</div>';
+    out += '<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>';
+    out += '<td><div style="font-size:19px;font-weight:bold;color:' + GOLD_DEEP + ';font-family:Georgia,serif">ZEN HOBİ SANAT</div>';
+    out += '<div style="font-size:13px;color:' + MUTED + ';margin:2px 0 10px">Course Application Form</div></td>';
+    if (basvuruNo) {
+      out += '<td align="right" style="vertical-align:top"><span style="display:inline-block;background-color:' + GOLD + ';color:' + GOLD_DEEP + ';font-weight:bold;font-size:13px;padding:5px 10px;border-radius:4px">Application No ' + esc(basvuruNo) + '</span></td>';
+    }
+    out += '</tr></table>';
     out += '<div style="border-top:2px solid ' + GOLD + ';margin-bottom:10px"></div>';
     out += '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:12px;color:' + MUTED + ';margin-bottom:14px"><tr>';
     out += '<td>Application Date: <b>' + esc(tarih) + '</b></td>';
@@ -531,6 +536,8 @@
   // main.js's generic submit handler (which would fetch to Web3Forms) never
   // runs — only one clean email gets sent.
   var MAILER_ENDPOINT = 'https://zen-hobi-sanat.cem468.workers.dev';
+  var lastBasvuruNo = null;
+  var successBaseHtml = null;
 
   document.addEventListener('submit', function (e) {
     if (e.target !== form) return;
@@ -549,31 +556,45 @@
     errEl.classList.remove('show');
     if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
 
-    var applicationHtml = buildDocument();
-    var docField = form.querySelector('#basvuruDokumani');
-    if (docField) docField.value = applicationHtml;
-    var fd = new FormData(form);
-    var subject = (form.querySelector('input[name="subject"]') || {}).value || 'Zen Hobi Sanat — New Course Application (EN)';
+    var fd;
 
-    var pdfBase64 = '';
-    try {
-      var mailDoc = buildPDF();
-      if (mailDoc) {
-        var dataUri = mailDoc.output('datauristring');
-        pdfBase64 = dataUri.split(',')[1] || '';
-      }
-    } catch (err) { pdfBase64 = ''; }
+    // Get the next sequential application number (persistent counter) first,
+    // then build the content with it. Falls back to no number if the
+    // counter service fails.
+    fetch(MAILER_ENDPOINT + '/next-number', { headers: { 'Accept': 'application/json' } })
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .catch(function () { return null; })
+      .then(function (numData) {
+        var basvuruNo = (numData && numData.success) ? numData.formatted : null;
+        lastBasvuruNo = basvuruNo;
 
-    fetch(MAILER_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        subject: subject,
-        application_html: applicationHtml,
-        pdf_base64: pdfBase64,
-        pdf_filename: 'zen-hobi-sanat-registration.pdf'
+        var applicationHtml = buildDocument(basvuruNo);
+        var docField = form.querySelector('#basvuruDokumani');
+        if (docField) docField.value = applicationHtml;
+        fd = new FormData(form);
+        var subject = (form.querySelector('input[name="subject"]') || {}).value || 'Zen Hobi Sanat — New Course Application (EN)';
+        if (basvuruNo) subject = '#' + basvuruNo + ' — ' + subject;
+
+        var pdfBase64 = '';
+        try {
+          var mailDoc = buildPDF(basvuruNo);
+          if (mailDoc) {
+            var dataUri = mailDoc.output('datauristring');
+            pdfBase64 = dataUri.split(',')[1] || '';
+          }
+        } catch (err) { pdfBase64 = ''; }
+
+        return fetch(MAILER_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            subject: subject,
+            application_html: applicationHtml,
+            pdf_base64: pdfBase64,
+            pdf_filename: 'zen-hobi-sanat-registration' + (basvuruNo ? '-' + basvuruNo : '') + '.pdf'
+          })
+        });
       })
-    })
       .then(function (res) {
         if (!res.ok) throw new Error('Submission error');
         return res.json();
@@ -581,7 +602,11 @@
       .then(function (data) {
         if (!data || !data.success) throw new Error('Submission error');
         var msg = form.querySelector('.form-success');
-        if (msg) msg.classList.add('show');
+        if (msg) {
+          if (successBaseHtml === null) successBaseHtml = msg.innerHTML;
+          msg.innerHTML = successBaseHtml + (lastBasvuruNo ? ' <strong>Application No: ' + lastBasvuruNo + '</strong>' : '');
+          msg.classList.add('show');
+        }
         form.dispatchEvent(new CustomEvent('formsuccess', { detail: { formData: fd } }));
         form.reset();
         if (msg) msg.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -596,7 +621,7 @@
       });
   }, true);
 
-  function buildPDF() {
+  function buildPDF(basvuruNo) {
     var jsPDF = window.jspdf && window.jspdf.jsPDF;
     if (!jsPDF) return null;
     var doc = new jsPDF({ unit: 'mm', format: 'a4' });
@@ -622,9 +647,14 @@
     var now = new Date();
     var tarih = now.toLocaleDateString('en-GB') + ' ' + now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 
-    // Top-right corner: PDF generation timestamp
+    // Top-right corner: PDF generation timestamp + application number
     doc.setFont(FONT, 'normal'); doc.setFontSize(8); doc.setTextColor(150, 138, 112);
     doc.text('Generated: ' + tarih, pageW - marginX, 11, { align: 'right' });
+    if (basvuruNo) {
+      doc.setFont(FONT, 'bold'); doc.setFontSize(11); doc.setTextColor.apply(doc, GOLD);
+      doc.text('Application No ' + basvuruNo, pageW - marginX, 17, { align: 'right' });
+      doc.setFont(FONT, 'normal');
+    }
 
     if (window.ZEN_LOGO_PNG_B64) {
       var logoW = 30, logoH = logoW * (253 / 520);
@@ -700,13 +730,13 @@
 
   form.addEventListener('formsuccess', function () {
     try {
-      var doc = buildPDF();
+      var doc = buildPDF(lastBasvuruNo);
       if (!doc) return;
       var kimAdi = (form.querySelector('#cocuk_ad') && form.querySelector('#cocuk_ad').value) || (form.querySelector('#ad_soyad') && form.querySelector('#ad_soyad').value) || 'application';
       var slug = kimAdi.toLocaleLowerCase('tr-TR')
         .replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's').replace(/ö/g, 'o').replace(/ç/g, 'c')
         .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'application';
-      doc.save('zen-hobi-sanat-registration-' + slug + '.pdf');
+      doc.save('zen-hobi-sanat-registration-' + (lastBasvuruNo ? lastBasvuruNo + '-' : '') + slug + '.pdf');
       var note = document.querySelector('.pdf-note');
       if (note) note.hidden = false;
     } catch (err) { /* silently skip if PDF generation fails — the form submission has already succeeded */ }

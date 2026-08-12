@@ -481,14 +481,19 @@
     return html;
   }
 
-  function buildDocument() {
+  function buildDocument(basvuruNo) {
     var kayitTipi = (form.querySelector('input[name="kayit_tipi"]:checked') || {}).value || '';
     var now = new Date();
     var tarih = now.toLocaleDateString('tr-TR') + ' ' + now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
 
     var out = '<div style="max-width:600px;margin:0 auto;font-family:Arial,Helvetica,sans-serif">';
-    out += '<div style="font-size:19px;font-weight:bold;color:' + GOLD_DEEP + ';font-family:Georgia,serif">ZEN HOBİ SANAT</div>';
-    out += '<div style="font-size:13px;color:' + MUTED + ';margin:2px 0 10px">Kurs Başvuru Formu</div>';
+    out += '<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>';
+    out += '<td><div style="font-size:19px;font-weight:bold;color:' + GOLD_DEEP + ';font-family:Georgia,serif">ZEN HOBİ SANAT</div>';
+    out += '<div style="font-size:13px;color:' + MUTED + ';margin:2px 0 10px">Kurs Başvuru Formu</div></td>';
+    if (basvuruNo) {
+      out += '<td align="right" style="vertical-align:top"><span style="display:inline-block;background-color:' + GOLD + ';color:' + GOLD_DEEP + ';font-weight:bold;font-size:13px;padding:5px 10px;border-radius:4px">Başvuru No ' + esc(basvuruNo) + '</span></td>';
+    }
+    out += '</tr></table>';
     out += '<div style="border-top:2px solid ' + GOLD + ';margin-bottom:10px"></div>';
     out += '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:12px;color:' + MUTED + ';margin-bottom:14px"><tr>';
     out += '<td>Başvuru Tarihi: <b>' + esc(tarih) + '</b></td>';
@@ -536,6 +541,8 @@
   // ele alinmasini saglar; boylece main.js'teki genel form gonderim akisi
   // (Web3Forms'a fetch) hic calismaz ve tek, temiz bir e-posta gider.
   var MAILER_ENDPOINT = 'https://zen-hobi-sanat.cem468.workers.dev';
+  var lastBasvuruNo = null;
+  var successBaseHtml = null;
 
   document.addEventListener('submit', function (e) {
     if (e.target !== form) return;
@@ -554,31 +561,44 @@
     errEl.classList.remove('show');
     if (btn) { btn.disabled = true; btn.textContent = 'Gönderiliyor…'; }
 
-    var applicationHtml = buildDocument();
-    var docField = form.querySelector('#basvuruDokumani');
-    if (docField) docField.value = applicationHtml;
-    var fd = new FormData(form);
-    var subject = (form.querySelector('input[name="subject"]') || {}).value || 'Zen Hobi Sanat — Yeni Kurs Başvurusu';
+    var fd;
 
-    var pdfBase64 = '';
-    try {
-      var mailDoc = buildPDF();
-      if (mailDoc) {
-        var dataUri = mailDoc.output('datauristring');
-        pdfBase64 = dataUri.split(',')[1] || '';
-      }
-    } catch (err) { pdfBase64 = ''; }
+    // Once, sirali basvuru numarasini al (kalici sayac), sonra icerigi bu
+    // numarayla olustur. Numara servisi basarisiz olursa numarasiz devam et.
+    fetch(MAILER_ENDPOINT + '/next-number', { headers: { 'Accept': 'application/json' } })
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .catch(function () { return null; })
+      .then(function (numData) {
+        var basvuruNo = (numData && numData.success) ? numData.formatted : null;
+        lastBasvuruNo = basvuruNo;
 
-    fetch(MAILER_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        subject: subject,
-        application_html: applicationHtml,
-        pdf_base64: pdfBase64,
-        pdf_filename: 'zen-hobi-sanat-basvuru.pdf'
+        var applicationHtml = buildDocument(basvuruNo);
+        var docField = form.querySelector('#basvuruDokumani');
+        if (docField) docField.value = applicationHtml;
+        fd = new FormData(form);
+        var subject = (form.querySelector('input[name="subject"]') || {}).value || 'Zen Hobi Sanat — Yeni Kurs Başvurusu';
+        if (basvuruNo) subject = '#' + basvuruNo + ' — ' + subject;
+
+        var pdfBase64 = '';
+        try {
+          var mailDoc = buildPDF(basvuruNo);
+          if (mailDoc) {
+            var dataUri = mailDoc.output('datauristring');
+            pdfBase64 = dataUri.split(',')[1] || '';
+          }
+        } catch (err) { pdfBase64 = ''; }
+
+        return fetch(MAILER_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            subject: subject,
+            application_html: applicationHtml,
+            pdf_base64: pdfBase64,
+            pdf_filename: 'zen-hobi-sanat-basvuru' + (basvuruNo ? '-' + basvuruNo : '') + '.pdf'
+          })
+        });
       })
-    })
       .then(function (res) {
         if (!res.ok) throw new Error('Gönderim hatası');
         return res.json();
@@ -586,7 +606,11 @@
       .then(function (data) {
         if (!data || !data.success) throw new Error('Gönderim hatası');
         var msg = form.querySelector('.form-success');
-        if (msg) msg.classList.add('show');
+        if (msg) {
+          if (successBaseHtml === null) successBaseHtml = msg.innerHTML;
+          msg.innerHTML = successBaseHtml + (lastBasvuruNo ? ' <strong>Başvuru No: ' + lastBasvuruNo + '</strong>' : '');
+          msg.classList.add('show');
+        }
         form.dispatchEvent(new CustomEvent('formsuccess', { detail: { formData: fd } }));
         form.reset();
         if (msg) msg.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -603,7 +627,7 @@
 
   // Gönderim başarılı olunca: aynı verilerden A4 ölçüsünde bir PDF üretip
   // otomatik indirir (main.js'teki "formsuccess" olayını dinler).
-  function buildPDF() {
+  function buildPDF(basvuruNo) {
     var jsPDF = window.jspdf && window.jspdf.jsPDF;
     if (!jsPDF) return null;
     var doc = new jsPDF({ unit: 'mm', format: 'a4' });
@@ -629,9 +653,14 @@
     var now = new Date();
     var tarih = now.toLocaleDateString('tr-TR') + ' ' + now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
 
-    // Sağ üst köşe: PDF'in oluşturulduğu tarih/saat damgası
+    // Sağ üst köşe: PDF'in oluşturulduğu tarih/saat damgası + başvuru numarası
     doc.setFont(FONT, 'normal'); doc.setFontSize(8); doc.setTextColor(150, 138, 112);
     doc.text('Oluşturulma: ' + tarih, pageW - marginX, 11, { align: 'right' });
+    if (basvuruNo) {
+      doc.setFont(FONT, 'bold'); doc.setFontSize(11); doc.setTextColor.apply(doc, GOLD);
+      doc.text('Başvuru No ' + basvuruNo, pageW - marginX, 17, { align: 'right' });
+      doc.setFont(FONT, 'normal');
+    }
 
     if (window.ZEN_LOGO_PNG_B64) {
       var logoW = 30, logoH = logoW * (253 / 520);
@@ -707,13 +736,13 @@
 
   form.addEventListener('formsuccess', function () {
     try {
-      var doc = buildPDF();
+      var doc = buildPDF(lastBasvuruNo);
       if (!doc) return;
       var kimAdi = (form.querySelector('#cocuk_ad') && form.querySelector('#cocuk_ad').value) || (form.querySelector('#ad_soyad') && form.querySelector('#ad_soyad').value) || 'basvuru';
       var slug = kimAdi.toLocaleLowerCase('tr-TR')
         .replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's').replace(/ö/g, 'o').replace(/ç/g, 'c')
         .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'basvuru';
-      doc.save('zen-hobi-sanat-basvuru-' + slug + '.pdf');
+      doc.save('zen-hobi-sanat-basvuru-' + (lastBasvuruNo ? lastBasvuruNo + '-' : '') + slug + '.pdf');
       var note = document.querySelector('.pdf-note');
       if (note) note.hidden = false;
     } catch (err) { /* PDF oluşturulamazsa sessizce geç — form gönderimi zaten tamamlandı */ }
