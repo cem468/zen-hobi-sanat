@@ -584,6 +584,11 @@
           }
         } catch (err) { pdfBase64 = ''; }
 
+        var applicantEmail = (form.querySelector('#eposta') || {}).value || '';
+        var applicantSubject = 'Your Application Has Been Received — Zen Hobi Sanat' + (basvuruNo ? ' (#' + basvuruNo + ')' : '');
+        var applicantIntro = '<div style="max-width:600px;margin:0 auto 12px;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:' + INK + '">Hi, your registration application has been received. Below is a summary of what you submitted — we\'ll be in touch shortly to plan the right day and time together.</div>';
+        var applicantHtml = applicantIntro + applicationHtml;
+
         return fetch(MAILER_ENDPOINT, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -591,7 +596,10 @@
             subject: subject,
             application_html: applicationHtml,
             pdf_base64: pdfBase64,
-            pdf_filename: 'zen-hobi-sanat-registration' + (basvuruNo ? '-' + basvuruNo : '') + '-' + new Date().toISOString().slice(0, 10) + '.pdf'
+            pdf_filename: 'zen-hobi-sanat-registration' + (basvuruNo ? '-' + basvuruNo : '') + '-' + new Date().toISOString().slice(0, 10) + '.pdf',
+            applicant_email: applicantEmail,
+            applicant_subject: applicantSubject,
+            applicant_html: applicantHtml
           })
         });
       })
