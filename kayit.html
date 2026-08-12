@@ -528,16 +528,14 @@
     return out;
   }
 
-  // EmailJS ile dogrudan gonderim: Web3Forms'un ucretsiz plani ozel HTML
-  // sablonu desteklemedigi icin (alan degerlerini kacis karakterleriyle duz
-  // metne ceviriyor), renkli tablo goruntusu icin EmailJS'e gecildi.
-  // document uzerinde YAKALAMA (capture) asamasinda dinlemek, olayin forma
-  // hic ulasmadan once ele alinmasini saglar; boylece main.js'teki genel
-  // form gonderim akisi (Web3Forms'a fetch) hic calismaz ve tek, temiz bir
-  // e-posta gider.
-  var EMAILJS_SERVICE_ID = 'service_w5a234p';
-  var EMAILJS_TEMPLATE_ID = 'template_pvd5i9s';
-  var EMAILJS_PUBLIC_KEY = 'F0R45pxIvrOjIqb0u';
+  // Cloudflare Worker uzerinden dogrudan gonderim: Worker, Resend API'sini
+  // gizli anahtarla cagirip hem renkli HTML e-postayi hem de gercek PDF
+  // ekini info@zenhobisanat.com adresine gonderiyor (Web3Forms/EmailJS'in
+  // ucretsiz planlari dosya eki desteklemiyordu). document uzerinde
+  // YAKALAMA (capture) asamasinda dinlemek, olayin forma hic ulasmadan once
+  // ele alinmasini saglar; boylece main.js'teki genel form gonderim akisi
+  // (Web3Forms'a fetch) hic calismaz ve tek, temiz bir e-posta gider.
+  var MAILER_ENDPOINT = 'https://zen-hobi-sanat.cem468.workers.dev';
 
   document.addEventListener('submit', function (e) {
     if (e.target !== form) return;
@@ -562,18 +560,31 @@
     var fd = new FormData(form);
     var subject = (form.querySelector('input[name="subject"]') || {}).value || 'Zen Hobi Sanat — Yeni Kurs Başvurusu';
 
-    fetch('https://api.emailjs.com/api/v1.0/email/send', {
+    var pdfBase64 = '';
+    try {
+      var mailDoc = buildPDF();
+      if (mailDoc) {
+        var dataUri = mailDoc.output('datauristring');
+        pdfBase64 = dataUri.split(',')[1] || '';
+      }
+    } catch (err) { pdfBase64 = ''; }
+
+    fetch(MAILER_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        service_id: EMAILJS_SERVICE_ID,
-        template_id: EMAILJS_TEMPLATE_ID,
-        user_id: EMAILJS_PUBLIC_KEY,
-        template_params: { subject: subject, application_html: applicationHtml }
+        subject: subject,
+        application_html: applicationHtml,
+        pdf_base64: pdfBase64,
+        pdf_filename: 'zen-hobi-sanat-basvuru.pdf'
       })
     })
       .then(function (res) {
-        if (!res.ok) throw new Error('EmailJS gönderim hatası');
+        if (!res.ok) throw new Error('Gönderim hatası');
+        return res.json();
+      })
+      .then(function (data) {
+        if (!data || !data.success) throw new Error('Gönderim hatası');
         var msg = form.querySelector('.form-success');
         if (msg) msg.classList.add('show');
         form.dispatchEvent(new CustomEvent('formsuccess', { detail: { formData: fd } }));

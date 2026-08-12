@@ -523,15 +523,14 @@
     return out;
   }
 
-  // Send directly via EmailJS: Web3Forms's free plan doesn't support custom
-  // HTML templates (it escapes field values to plain text), so this switches
-  // to EmailJS for the colored-table email. Listening on `document` in the
+  // Send directly via the Cloudflare Worker mailer: it calls the Resend API
+  // server-side with a secret key to deliver both the colored HTML email and
+  // a real PDF attachment to info@zenhobisanat.com (Web3Forms/EmailJS's free
+  // plans don't support file attachments). Listening on `document` in the
   // CAPTURE phase handles the event before it ever reaches the form, so
   // main.js's generic submit handler (which would fetch to Web3Forms) never
   // runs — only one clean email gets sent.
-  var EMAILJS_SERVICE_ID = 'service_w5a234p';
-  var EMAILJS_TEMPLATE_ID = 'template_pvd5i9s';
-  var EMAILJS_PUBLIC_KEY = 'F0R45pxIvrOjIqb0u';
+  var MAILER_ENDPOINT = 'https://zen-hobi-sanat.cem468.workers.dev';
 
   document.addEventListener('submit', function (e) {
     if (e.target !== form) return;
@@ -556,18 +555,31 @@
     var fd = new FormData(form);
     var subject = (form.querySelector('input[name="subject"]') || {}).value || 'Zen Hobi Sanat — New Course Application (EN)';
 
-    fetch('https://api.emailjs.com/api/v1.0/email/send', {
+    var pdfBase64 = '';
+    try {
+      var mailDoc = buildPDF();
+      if (mailDoc) {
+        var dataUri = mailDoc.output('datauristring');
+        pdfBase64 = dataUri.split(',')[1] || '';
+      }
+    } catch (err) { pdfBase64 = ''; }
+
+    fetch(MAILER_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        service_id: EMAILJS_SERVICE_ID,
-        template_id: EMAILJS_TEMPLATE_ID,
-        user_id: EMAILJS_PUBLIC_KEY,
-        template_params: { subject: subject, application_html: applicationHtml }
+        subject: subject,
+        application_html: applicationHtml,
+        pdf_base64: pdfBase64,
+        pdf_filename: 'zen-hobi-sanat-registration.pdf'
       })
     })
       .then(function (res) {
-        if (!res.ok) throw new Error('EmailJS submission error');
+        if (!res.ok) throw new Error('Submission error');
+        return res.json();
+      })
+      .then(function (data) {
+        if (!data || !data.success) throw new Error('Submission error');
         var msg = form.querySelector('.form-success');
         if (msg) msg.classList.add('show');
         form.dispatchEvent(new CustomEvent('formsuccess', { detail: { formData: fd } }));
