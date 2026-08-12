@@ -365,6 +365,7 @@
 <script src="assets/js/vendor/ScrollTrigger.min.js" defer></script>
 <script src="assets/js/vendor/motion.umd.js" defer></script>
 <script src="assets/js/vendor/jspdf.umd.min.js" defer></script>
+<script src="assets/js/vendor/jspdf-autotable.min.js" defer></script>
 <script src="assets/js/vendor/roboto-tr-font.js" defer></script>
 <script src="assets/js/vendor/logo-b64.js" defer></script>
 <script src="assets/js/main.js?v=10" defer></script>
@@ -543,8 +544,7 @@
     var jsPDF = window.jspdf && window.jspdf.jsPDF;
     if (!jsPDF) return null;
     var doc = new jsPDF({ unit: 'mm', format: 'a4' });
-    var pageW = 210, pageH = 297, marginX = 20, bottomLimit = pageH - 22, y = 24;
-    var contentW = pageW - marginX * 2;
+    var pageW = 210, marginX = 16, contentW = pageW - marginX * 2, y = 22;
 
     // Türkçe karakterleri (ı, İ, ş, ğ) doğru göstermek için Roboto gömülü fontu kullan;
     // yüklenemezse (ör. script henüz gelmediyse) sessizce Helvetica'ya düş.
@@ -558,29 +558,36 @@
         FONT = 'RobotoTR';
       } catch (e) { FONT = 'helvetica'; }
     }
+    doc.setFont(FONT, 'normal');
 
-    function ensureSpace(need) {
-      if (y + need > bottomLimit) { doc.addPage(); y = 24; }
-    }
+    // Marka renkleri (site paletiyle uyumlu: altın + krem + mürekkep)
+    var GOLD = [199, 154, 82], GOLD_DEEP = [58, 39, 8], INK = [35, 30, 24], SAND = [247, 240, 226], LINE = [222, 202, 160];
 
-    if (window.ZEN_LOGO_PNG_B64) {
-      var logoW = 34, logoH = logoW * (253 / 520);
-      doc.addImage(window.ZEN_LOGO_PNG_B64, 'PNG', marginX, y - 6, logoW, logoH);
-      y += logoH + 2;
-    } else {
-      doc.setFont(FONT, 'bold'); doc.setFontSize(17);
-      doc.text('ZEN HOBİ SANAT', marginX, y); y += 7;
-    }
-    doc.setFont(FONT, 'normal'); doc.setFontSize(11); doc.setTextColor(40);
-    doc.text('Kurs Başvuru Formu', marginX, y); y += 7;
-    doc.setDrawColor(190); doc.line(marginX, y, pageW - marginX, y); y += 8;
-
-    var kayitTipi = (form.querySelector('input[name="kayit_tipi"]:checked') || {}).value || '';
     var now = new Date();
     var tarih = now.toLocaleDateString('tr-TR') + ' ' + now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
-    doc.setFontSize(10); doc.setTextColor(60);
-    doc.text('Başvuru Tarihi: ' + tarih, marginX, y); y += 5.5;
-    doc.text('Kayıt Türü: ' + kayitTipi, marginX, y); y += 9;
+
+    // Sağ üst köşe: PDF'in oluşturulduğu tarih/saat damgası
+    doc.setFont(FONT, 'normal'); doc.setFontSize(8); doc.setTextColor(150, 138, 112);
+    doc.text('Oluşturulma: ' + tarih, pageW - marginX, 11, { align: 'right' });
+
+    if (window.ZEN_LOGO_PNG_B64) {
+      var logoW = 30, logoH = logoW * (253 / 520);
+      doc.addImage(window.ZEN_LOGO_PNG_B64, 'PNG', marginX, y - 6, logoW, logoH);
+      y += logoH - 1;
+    } else {
+      doc.setFont(FONT, 'bold'); doc.setFontSize(16); doc.setTextColor.apply(doc, INK);
+      doc.text('ZEN HOBİ SANAT', marginX, y); y += 6;
+    }
+    doc.setFont(FONT, 'normal'); doc.setFontSize(10.5); doc.setTextColor(120, 100, 70);
+    doc.text('Kurs Başvuru Formu', marginX, y); y += 6.5;
+    doc.setDrawColor.apply(doc, GOLD); doc.setLineWidth(0.6);
+    doc.line(marginX, y, pageW - marginX, y); y += 7;
+
+    var kayitTipi = (form.querySelector('input[name="kayit_tipi"]:checked') || {}).value || '';
+    doc.setFontSize(9); doc.setTextColor(130, 118, 95);
+    doc.text('Başvuru Tarihi: ' + tarih, marginX, y);
+    doc.text('Kayıt Türü: ' + kayitTipi, pageW - marginX, y, { align: 'right' });
+    y += 8;
 
     var fieldsets = form.querySelectorAll('#kayitDetay fieldset');
     for (var f = 0; f < fieldsets.length; f++) {
@@ -598,41 +605,38 @@
       }
       if (!rows.length) continue;
 
-      ensureSpace(12);
-      doc.setFont(FONT, 'bold'); doc.setFontSize(11); doc.setTextColor(20);
-      doc.text(legend.textContent.trim().toLocaleUpperCase('tr-TR'), marginX, y); y += 2;
-      doc.setDrawColor(215); doc.line(marginX, y, pageW - marginX, y); y += 5.5;
-      doc.setFont(FONT, 'normal'); doc.setFontSize(10); doc.setTextColor(60);
-
-      for (var i = 0; i < rows.length; i++) {
-        var lines = doc.splitTextToSize(rows[i][0] + ': ' + rows[i][1], contentW);
-        for (var l = 0; l < lines.length; l++) {
-          ensureSpace(5);
-          doc.text(lines[l], marginX, y); y += 5;
-        }
-      }
-      y += 4;
+      doc.autoTable({
+        startY: y,
+        margin: { left: marginX, right: marginX },
+        head: [[{ content: legend.textContent.trim(), colSpan: 2 }]],
+        body: rows,
+        theme: 'grid',
+        styles: { font: FONT, fontSize: 10, cellPadding: 2.7, lineColor: LINE, lineWidth: 0.25, textColor: INK, valign: 'middle' },
+        headStyles: { fillColor: GOLD, textColor: GOLD_DEEP, fontStyle: 'bold', fontSize: 10.5 },
+        alternateRowStyles: { fillColor: SAND },
+        columnStyles: { 0: { cellWidth: 46, fontStyle: 'bold', textColor: [130, 105, 60] }, 1: { cellWidth: contentW - 46 } }
+      });
+      y = doc.lastAutoTable.finalY + 6;
     }
 
     var telafiEl = document.getElementById('telafiNotu');
     if (telafiEl) {
-      ensureSpace(12);
-      doc.setFont(FONT, 'bold'); doc.setFontSize(11); doc.setTextColor(20);
-      doc.text('TELAFİ HAKKINIZ', marginX, y); y += 2;
-      doc.setDrawColor(215); doc.line(marginX, y, pageW - marginX, y); y += 5.5;
-      doc.setFont(FONT, 'normal'); doc.setFontSize(10); doc.setTextColor(60);
-      var telafiLines = doc.splitTextToSize(telafiEl.textContent.trim().replace(/\s+/g, ' '), contentW);
-      for (var t = 0; t < telafiLines.length; t++) {
-        ensureSpace(5);
-        doc.text(telafiLines[t], marginX, y); y += 5;
-      }
-      y += 4;
+      doc.autoTable({
+        startY: y,
+        margin: { left: marginX, right: marginX },
+        head: [['TELAFİ HAKKINIZ']],
+        body: [[telafiEl.textContent.trim().replace(/\s+/g, ' ')]],
+        theme: 'grid',
+        styles: { font: FONT, fontSize: 9.5, cellPadding: 3.2, lineColor: LINE, lineWidth: 0.25, textColor: [95, 80, 55], fillColor: SAND },
+        headStyles: { fillColor: GOLD, textColor: GOLD_DEEP, fontStyle: 'bold', fontSize: 10 }
+      });
+      y = doc.lastAutoTable.finalY + 6;
     }
 
-    ensureSpace(14);
-    doc.setDrawColor(190); doc.line(marginX, y, pageW - marginX, y); y += 6;
-    doc.setFontSize(9); doc.setTextColor(120);
-    doc.text('Zen Hobi Sanat  ·  Tel: 0544 403 42 66  ·  info@zenhobisanat.com', marginX, y); y += 4.5;
+    doc.setDrawColor.apply(doc, GOLD); doc.setLineWidth(0.4);
+    doc.line(marginX, y, pageW - marginX, y); y += 5;
+    doc.setFont(FONT, 'normal'); doc.setFontSize(8.5); doc.setTextColor(140, 128, 105);
+    doc.text('Zen Hobi Sanat  ·  Tel: 0544 403 42 66  ·  info@zenhobisanat.com', marginX, y); y += 4.2;
     doc.text('Bahçeşehir 2. Kısım Mah. M. Kemal Atatürk Bulvarı No:23 D:1, Başakşehir/İstanbul', marginX, y);
 
     return doc;
