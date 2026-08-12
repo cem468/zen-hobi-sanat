@@ -791,12 +791,19 @@
     } catch (e3) { pdfFile = null; }
 
     if (pdfFile) {
-      waBox.innerHTML = '<button type="button" class="btn btn--wa btn--block" id="waShareBtn">' + waIcon + 'Confirm via WhatsApp with PDF</button>' +
-        '<p class="form-note" style="text-align:center;margin-top:.6rem">Choose WhatsApp from the share menu that opens to send it to us.</p>';
+      // Two-step flow: (1) the wa.me link with the correct number opens
+      // with the text message only — WhatsApp doesn't let a website drop a
+      // file straight into another app automatically. (2) the PDF is then
+      // shared via the system share sheet, choosing WhatsApp to send it into
+      // the SAME chat that was just opened.
+      waBox.innerHTML =
+        '<a class="btn btn--wa btn--block" href="' + url + '" target="_blank" rel="noopener" id="waStep1">' + waIcon + '1) Send Message on WhatsApp</a>' +
+        '<button type="button" class="btn btn--wa btn--block" id="waShareBtn" style="margin-top:.6rem">' + waIcon + '2) Share PDF via WhatsApp</button>' +
+        '<p class="form-note" style="text-align:center;margin-top:.6rem">Send the message first, then when sharing the PDF choose WhatsApp and forward it to the same chat.</p>';
       var shareBtn = document.getElementById('waShareBtn');
       if (shareBtn) {
         shareBtn.addEventListener('click', function () {
-          navigator.share({ files: [pdfFile], text: waText, title: 'Zen Hobi Sanat Registration' }).catch(function () { /* user canceled or share failed — ignore silently */ });
+          navigator.share({ files: [pdfFile], title: 'Zen Hobi Sanat Registration' }).catch(function () { /* user canceled or share failed — ignore silently */ });
         });
       }
     } else {

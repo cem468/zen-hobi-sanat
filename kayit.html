@@ -796,12 +796,18 @@
     } catch (e3) { pdfFile = null; }
 
     if (pdfFile) {
-      waBox.innerHTML = '<button type="button" class="btn btn--wa btn--block" id="waShareBtn">' + waIcon + 'PDF ile WhatsApp\'tan Onaylayın</button>' +
-        '<p class="form-note" style="text-align:center;margin-top:.6rem">Açılan paylaşım menüsünden WhatsApp\'ı seçip bize gönderin.</p>';
+      // Iki adimli akis: (1) dogru numarayla acilan wa.me linki sadece metni
+      // gonderir — WhatsApp bir web sitesinin baska bir uygulamaya otomatik
+      // dosya birakmasina izin vermiyor. (2) PDF, sistem paylasim menusunden
+      // WhatsApp secilerek AYNI (az once acilmis) sohbete gonderilir.
+      waBox.innerHTML =
+        '<a class="btn btn--wa btn--block" href="' + url + '" target="_blank" rel="noopener" id="waStep1">' + waIcon + '1) WhatsApp\'ta Mesaj Gönder</a>' +
+        '<button type="button" class="btn btn--wa btn--block" id="waShareBtn" style="margin-top:.6rem">' + waIcon + '2) PDF\'i WhatsApp\'tan Paylaş</button>' +
+        '<p class="form-note" style="text-align:center;margin-top:.6rem">Önce mesajı gönderin, sonra PDF\'i paylaşırken açılan menüden WhatsApp\'ı seçip az önceki sohbete iletin.</p>';
       var shareBtn = document.getElementById('waShareBtn');
       if (shareBtn) {
         shareBtn.addEventListener('click', function () {
-          navigator.share({ files: [pdfFile], text: waText, title: 'Zen Hobi Sanat Kayıt' }).catch(function () { /* kullanıcı iptal etti veya paylaşım başarısız oldu — sessizce geç */ });
+          navigator.share({ files: [pdfFile], title: 'Zen Hobi Sanat Kayıt' }).catch(function () { /* kullanıcı iptal etti veya paylaşım başarısız oldu — sessizce geç */ });
         });
       }
     } else {
