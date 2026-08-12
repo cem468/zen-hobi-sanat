@@ -591,7 +591,7 @@
             subject: subject,
             application_html: applicationHtml,
             pdf_base64: pdfBase64,
-            pdf_filename: 'zen-hobi-sanat-registration' + (basvuruNo ? '-' + basvuruNo : '') + '.pdf'
+            pdf_filename: 'zen-hobi-sanat-registration' + (basvuruNo ? '-' + basvuruNo : '') + '-' + new Date().toISOString().slice(0, 10) + '.pdf'
           })
         });
       })
@@ -736,7 +736,7 @@
       var slug = kimAdi.toLocaleLowerCase('tr-TR')
         .replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's').replace(/ö/g, 'o').replace(/ç/g, 'c')
         .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'application';
-      doc.save('zen-hobi-sanat-registration-' + (lastBasvuruNo ? lastBasvuruNo + '-' : '') + slug + '.pdf');
+      doc.save('zen-hobi-sanat-registration-' + (lastBasvuruNo ? lastBasvuruNo + '-' : '') + new Date().toISOString().slice(0, 10) + '-' + slug + '.pdf');
       var note = document.querySelector('.pdf-note');
       if (note) note.hidden = false;
     } catch (err) { /* silently skip if PDF generation fails — the form submission has already succeeded */ }

@@ -595,7 +595,7 @@
             subject: subject,
             application_html: applicationHtml,
             pdf_base64: pdfBase64,
-            pdf_filename: 'zen-hobi-sanat-basvuru' + (basvuruNo ? '-' + basvuruNo : '') + '.pdf'
+            pdf_filename: 'zen-hobi-sanat-basvuru' + (basvuruNo ? '-' + basvuruNo : '') + '-' + new Date().toISOString().slice(0, 10) + '.pdf'
           })
         });
       })
@@ -742,7 +742,7 @@
       var slug = kimAdi.toLocaleLowerCase('tr-TR')
         .replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's').replace(/ö/g, 'o').replace(/ç/g, 'c')
         .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'basvuru';
-      doc.save('zen-hobi-sanat-basvuru-' + (lastBasvuruNo ? lastBasvuruNo + '-' : '') + slug + '.pdf');
+      doc.save('zen-hobi-sanat-basvuru-' + (lastBasvuruNo ? lastBasvuruNo + '-' : '') + new Date().toISOString().slice(0, 10) + '-' + slug + '.pdf');
       var note = document.querySelector('.pdf-note');
       if (note) note.hidden = false;
     } catch (err) { /* PDF oluşturulamazsa sessizce geç — form gönderimi zaten tamamlandı */ }
