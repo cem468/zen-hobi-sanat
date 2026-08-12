@@ -451,23 +451,29 @@
     return lbl ? lbl.textContent.replace(/\*/g, '').trim() : el.name;
   }
 
-  var MAX_WIDTH = 58;
-  function wrapInto(lines, prefix, text) {
-    var indent = new Array(prefix.length + 1).join(' ');
-    var words = String(text).split(/\s+/);
-    var line = prefix;
-    for (var i = 0; i < words.length; i++) {
-      var w = words[i];
-      var atLineStart = (line === prefix || line === indent);
-      var candidate = atLineStart ? line + w : line + ' ' + w;
-      if (candidate.length > MAX_WIDTH && !atLineStart) {
-        lines.push(line);
-        line = indent + w;
-      } else {
-        line = candidate;
-      }
+  function esc(s) {
+    var d = document.createElement('div');
+    d.textContent = s == null ? '' : String(s);
+    return d.innerHTML;
+  }
+
+  // Email body sent to EmailJS: inline-styled HTML table using the brand
+  // colors (gold + cream). Derived from the fieldset/legend/label text, so
+  // it stays in sync automatically if the form fields change.
+  var GOLD = '#c79a52', GOLD_DEEP = '#3a2708', SAND = '#f7f0e2', LINE = '#dfc9a0', INK = '#231e18', MUTED = '#8a6a2c';
+
+  function sectionTable(titleHtml, rows) {
+    var html = '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="1" bordercolor="' + LINE + '" style="border-collapse:collapse;margin:0 0 14px;font-family:Arial,Helvetica,sans-serif">';
+    html += '<tr><td colspan="2" bgcolor="' + GOLD + '" style="background-color:' + GOLD + ';color:' + GOLD_DEEP + ';font-weight:bold;font-size:13px;padding:8px 12px">' + titleHtml + '</td></tr>';
+    for (var i = 0; i < rows.length; i++) {
+      var bg = (i % 2 === 0) ? SAND : '#ffffff';
+      html += '<tr bgcolor="' + bg + '" style="background-color:' + bg + '">';
+      html += '<td style="padding:7px 12px;font-weight:bold;color:' + MUTED + ';font-size:12.5px;width:170px;vertical-align:top">' + esc(rows[i][0]) + '</td>';
+      html += '<td style="padding:7px 12px;color:' + INK + ';font-size:12.5px;vertical-align:top">' + esc(rows[i][1]).replace(/\n/g, '<br>') + '</td>';
+      html += '</tr>';
     }
-    lines.push(line);
+    html += '</table>';
+    return html;
   }
 
   function buildDocument() {
@@ -475,11 +481,14 @@
     var now = new Date();
     var tarih = now.toLocaleDateString('en-GB') + ' ' + now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 
-    var lines = [];
-    lines.push('ZEN HOBİ SANAT - COURSE APPLICATION FORM');
-    lines.push('Application Date: ' + tarih);
-    lines.push('Registration Type: ' + kayitTipi);
-    lines.push('========================================');
+    var out = '<div style="max-width:600px;margin:0 auto;font-family:Arial,Helvetica,sans-serif">';
+    out += '<div style="font-size:19px;font-weight:bold;color:' + GOLD_DEEP + ';font-family:Georgia,serif">ZEN HOBİ SANAT</div>';
+    out += '<div style="font-size:13px;color:' + MUTED + ';margin:2px 0 10px">Course Application Form</div>';
+    out += '<div style="border-top:2px solid ' + GOLD + ';margin-bottom:10px"></div>';
+    out += '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:12px;color:' + MUTED + ';margin-bottom:14px"><tr>';
+    out += '<td>Application Date: <b>' + esc(tarih) + '</b></td>';
+    out += '<td align="right">Registration Type: <b>' + esc(kayitTipi) + '</b></td>';
+    out += '</tr></table>';
 
     var fieldsets = form.querySelectorAll('#kayitDetay fieldset');
     for (var f = 0; f < fieldsets.length; f++) {
@@ -496,35 +505,83 @@
         rows.push([fieldLabel(el), val]);
       }
       if (!rows.length) continue;
-      lines.push('');
-      lines.push(legend.textContent.trim().toLocaleUpperCase('en-US'));
-      lines.push(new Array(legend.textContent.trim().length + 1).join('-'));
-      for (var i = 0; i < rows.length; i++) {
-        wrapInto(lines, rows[i][0] + ': ', rows[i][1]);
-      }
+      out += sectionTable(esc(legend.textContent.trim()), rows);
     }
 
     var telafiEl = document.getElementById('telafiNotu');
     if (telafiEl) {
-      lines.push('');
-      lines.push('MAKE-UP CLASS POLICY');
-      lines.push('---------------');
-      wrapInto(lines, '', telafiEl.textContent.trim().replace(/\s+/g, ' '));
+      out += '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="1" bordercolor="' + LINE + '" style="border-collapse:collapse;margin:0 0 14px;font-family:Arial,Helvetica,sans-serif">';
+      out += '<tr><td bgcolor="' + GOLD + '" style="background-color:' + GOLD + ';color:' + GOLD_DEEP + ';font-weight:bold;font-size:13px;padding:8px 12px">MAKE-UP CLASS POLICY</td></tr>';
+      out += '<tr bgcolor="' + SAND + '" style="background-color:' + SAND + '"><td style="padding:9px 12px;color:' + MUTED + ';font-size:12.5px">' + esc(telafiEl.textContent.trim().replace(/\s+/g, ' ')) + '</td></tr>';
+      out += '</table>';
     }
 
-    lines.push('');
-    lines.push('========================================');
-    lines.push('Zen Hobi Sanat');
-    lines.push('Tel: +90 544 403 42 66 - Email: info@zenhobisanat.com');
-    wrapInto(lines, '', 'Bahçeşehir 2. Kısım Mah. M. Kemal Atatürk Bulvarı No:23 D:1, Başakşehir/Istanbul, Turkey');
-    return lines.join('\n');
+    out += '<div style="font-size:11px;color:#a08f6e;border-top:1px solid ' + LINE + ';padding-top:8px;margin-top:4px">';
+    out += 'Zen Hobi Sanat &middot; Tel: +90 544 403 42 66 &middot; info@zenhobisanat.com<br>';
+    out += 'Bahçeşehir 2. Kısım Mah. M. Kemal Atatürk Bulvarı No:23 D:1, Başakşehir/Istanbul, Turkey';
+    out += '</div></div>';
+    return out;
   }
+
+  // Send directly via EmailJS: Web3Forms's free plan doesn't support custom
+  // HTML templates (it escapes field values to plain text), so this switches
+  // to EmailJS for the colored-table email. Listening on `document` in the
+  // CAPTURE phase handles the event before it ever reaches the form, so
+  // main.js's generic submit handler (which would fetch to Web3Forms) never
+  // runs — only one clean email gets sent.
+  var EMAILJS_SERVICE_ID = 'service_w5a234p';
+  var EMAILJS_TEMPLATE_ID = 'template_pvd5i9s';
+  var EMAILJS_PUBLIC_KEY = 'F0R45pxIvrOjIqb0u';
 
   document.addEventListener('submit', function (e) {
     if (e.target !== form) return;
-    if (!form.checkValidity()) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+
+    var btn = form.querySelector('button[type="submit"]');
+    var errEl = form.querySelector('.form-error');
+    if (!errEl) {
+      errEl = document.createElement('div');
+      errEl.className = 'form-error';
+      errEl.setAttribute('role', 'alert');
+      form.insertBefore(errEl, form.firstChild);
+    }
+    errEl.classList.remove('show');
+    if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
+
+    var applicationHtml = buildDocument();
     var docField = form.querySelector('#basvuruDokumani');
-    if (docField) docField.value = buildDocument();
+    if (docField) docField.value = applicationHtml;
+    var fd = new FormData(form);
+    var subject = (form.querySelector('input[name="subject"]') || {}).value || 'Zen Hobi Sanat — New Course Application (EN)';
+
+    fetch('https://api.emailjs.com/api/v1.0/email/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        service_id: EMAILJS_SERVICE_ID,
+        template_id: EMAILJS_TEMPLATE_ID,
+        user_id: EMAILJS_PUBLIC_KEY,
+        template_params: { subject: subject, application_html: applicationHtml }
+      })
+    })
+      .then(function (res) {
+        if (!res.ok) throw new Error('EmailJS submission error');
+        var msg = form.querySelector('.form-success');
+        if (msg) msg.classList.add('show');
+        form.dispatchEvent(new CustomEvent('formsuccess', { detail: { formData: fd } }));
+        form.reset();
+        if (msg) msg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      })
+      .catch(function () {
+        errEl.textContent = 'Something went wrong while submitting. Please try again or message us on WhatsApp: +90 544 403 42 66';
+        errEl.classList.add('show');
+        errEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      })
+      .then(function () {
+        if (btn) { btn.disabled = false; btn.textContent = btn.getAttribute('data-label') || 'Submit'; }
+      });
   }, true);
 
   function buildPDF() {
