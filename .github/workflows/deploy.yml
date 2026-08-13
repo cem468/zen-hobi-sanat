@@ -32,4 +32,14 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        
+      - name: Ping IndexNow
+        run: |
+          urls=$(grep -oE '<loc>[^<]*' sitemap.xml | sed 's/<loc>//' | node -e "
+            const fs = require('fs');
+            const urls = fs.readFileSync(0, 'utf8').trim().split('\n');
+            console.log(JSON.stringify(urls));
+          ")
+          curl -s -X POST "https://api.indexnow.org/indexnow" \
+            -H "Content-Type: application/json; charset=utf-8" \
+            -d "{\"host\":\"www.zenhobisanat.com\",\"key\":\"b2a02a060bf44f8396ae3d48d6014f0c\",\"keyLocation\":\"https://www.zenhobisanat.com/b2a02a060bf44f8396ae3d48d6014f0c.txt\",\"urlList\":$urls}" \
+            -o /dev/null -w "IndexNow status: %{http_code}\n"
