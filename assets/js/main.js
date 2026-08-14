@@ -345,4 +345,18 @@
       el.addEventListener("mouseleave", function () { ring.classList.remove("is-hover"); });
     });
   }
+
+  /* ---------- Google Ads dönüşüm izleme: WhatsApp & telefon tıklamaları ---------- */
+  document.addEventListener("click", function (e) {
+    if (typeof window.gtag !== "function") return;
+    var waLink = e.target.closest('a[href*="wa.me"]');
+    if (waLink) {
+      gtag("event", "conversion", { send_to: "AW-18389500900/95BiCJu40-EcEOSH5sBE" });
+      return;
+    }
+    var telLink = e.target.closest('a[href^="tel:"]');
+    if (telLink) {
+      gtag("event", "conversion", { send_to: "AW-18389500900/gurZCPiD0eEcEOSH5sBE" });
+    }
+  });
 })();

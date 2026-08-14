@@ -378,7 +378,7 @@
 <script src="assets/js/vendor/gsap.min.js" defer></script>
 <script src="assets/js/vendor/ScrollTrigger.min.js" defer></script>
 <script src="assets/js/vendor/motion.umd.js" defer></script>
-<script src="assets/js/main.js?v=10" defer></script>
+<script src="assets/js/main.js?v=11" defer></script>
 <script src="assets/js/motion-fx.js?v=2" defer></script>
 
 <!-- Koşullu kayıt formu: yetişkin / çocuk seçimine göre alanları göster + gönderime dahil et -->
@@ -652,6 +652,9 @@
       })
       .then(function (data) {
         if (!data || !data.success) throw new Error('Gönderim hatası');
+        if (typeof window.gtag === 'function') {
+          gtag('event', 'conversion', { send_to: 'AW-18389500900/-QAKCK21xuEcEOSH5sBE' });
+        }
         var msg = form.querySelector('.form-success');
         if (msg) {
           if (successBaseHtml === null) successBaseHtml = msg.innerHTML;
