@@ -297,7 +297,7 @@ strong{ font-weight:600; }
   .nav-menu a::after{ display:none; }
   .has-sub > a::before{ display:none; }
   .submenu{ position:static; transform:none; opacity:1; visibility:visible; box-shadow:none; border:none; background:transparent; padding:.2rem 1rem .6rem 0; min-width:0; }
-  .submenu a{ padding:.6em; white-space:nowrap; flex-direction:row-reverse; justify-content:flex-start; }
+  .submenu a{ padding:.6em; white-space:normal; flex-direction:row-reverse; justify-content:flex-start; text-align:right; }
   /* invisible click-outside-to-close catcher — no dimming/blur of the page itself */
   .nav-scrim{ position:fixed; inset:0; background:transparent; opacity:0; visibility:hidden; transition:visibility .4s; z-index:var(--z-overlay); }
   .nav-open .nav-scrim{ visibility:visible; }
