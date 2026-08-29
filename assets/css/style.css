@@ -288,6 +288,7 @@ strong{ font-weight:600; }
     background:rgba(10,8,6,.92); backdrop-filter:blur(16px) saturate(1.15);
     border:1px solid rgba(226,186,92,.16); border-radius:18px;
     padding:1rem 1.4rem 1.1rem 1.8rem; overflow-y:auto; overflow-x:hidden;
+    touch-action:pan-y; overscroll-behavior:contain;
     transform:translateX(calc(100% + 1rem)); transition:transform .5s var(--ease), opacity .4s var(--ease);
     opacity:0; box-shadow:var(--shadow-lg); z-index:var(--z-menu);
   }
