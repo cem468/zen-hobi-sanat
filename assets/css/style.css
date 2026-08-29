@@ -211,11 +211,12 @@ strong{ font-weight:600; }
 .has-sub > a::before{ content:"›"; margin-left:.3em; display:inline-block; transform:rotate(90deg); font-size:.85em; opacity:.6; }
 .submenu{
   position:absolute; top:calc(100% + .4rem); left:50%; transform:translateX(-50%) translateY(8px);
-  min-width:248px; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+  min-width:248px; max-height:min(70vh,560px); overflow-y:auto; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
   box-shadow:var(--shadow); padding:.6rem; opacity:0; visibility:hidden; transition:.3s var(--ease);
 }
 .has-sub:hover .submenu, .has-sub:focus-within .submenu{ opacity:1; visibility:visible; transform:translateX(-50%) translateY(0); }
-.submenu a{ display:block; padding:.62em .8em; border-radius:10px; font-weight:600; font-size:var(--step--1); transition:background .25s,color .25s; }
+.submenu a{ display:flex; align-items:center; gap:.65em; padding:.4em .8em; border-radius:10px; font-weight:600; font-size:var(--step--1); transition:background .25s,color .25s; }
+.submenu a img{ width:30px; height:30px; border-radius:8px; object-fit:cover; flex:0 0 auto; }
 .submenu a::after{ display:none; }
 .submenu a:hover{ background:var(--sand); color:var(--clay); }
 .submenu-label{ display:block; padding:.7em .8em .3em; font-weight:700; font-size:.66rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); }
