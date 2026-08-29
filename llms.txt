@@ -32,4 +32,4 @@ Zen Hobi Sanat is a local art hobby studio located at Bahçeşehir 2. Kısım Ma
 - [Careers](https://www.zenhobisanat.com/ik.html): Job openings at the studio.
 
 ## Language
-The primary language of the site is Turkish. A full English translation of every page is available under [/en/](https://www.zenhobisanat.com/en/).
+The primary language of the site is Turkish. A full English translation of every page is available under [/en/](https://www.zenhobisanat.com/en/). Beyond the website translation, the studio also offers English-language instruction during lessons for international/foreign participants — just requested at enrollment.
