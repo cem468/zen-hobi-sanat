@@ -298,6 +298,7 @@ strong{ font-weight:600; }
   .nav-menu a::after{ display:none; }
   .has-sub > a::before{ display:none; }
   .submenu{ position:static; transform:none; opacity:1; visibility:visible; box-shadow:none; border:none; background:transparent; padding:.1rem 0 .4rem .8rem; min-width:0; max-height:none; overflow:visible; }
+  .has-sub:hover .submenu, .has-sub:focus-within .submenu{ transform:none; }
   .submenu a{ padding:.4em .4em; white-space:nowrap; }
   /* dimmed click-outside-to-close backdrop */
   .nav-scrim{ position:fixed; inset:0; background:rgba(7,7,8,.55); opacity:0; visibility:hidden; transition:opacity .3s,visibility .3s; z-index:var(--z-overlay); }
