@@ -216,10 +216,13 @@
     var vio = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) {
         var v = en.target;
-        if (en.isIntersecting) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+        if (en.isIntersecting) {
+          if (v.dataset.poster && !v.poster) v.poster = v.dataset.poster;
+          var p = v.play(); if (p && p.catch) p.catch(function () {});
+        }
         else { v.pause(); }
       });
-    }, { threshold: 0.2 });
+    }, { threshold: 0.2, rootMargin: "200px 0px" });
     $$("video[data-autoplay]").forEach(function (v) { vio.observe(v); });
   }
 
