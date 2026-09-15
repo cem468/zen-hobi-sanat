@@ -125,7 +125,7 @@
     <div class="form-card" style="max-width:46rem;margin:0 auto" data-reveal>
       <form data-form id="kayitForm" action="https://api.web3forms.com/submit" method="POST">
         <input type="hidden" name="access_key" value="63fc186e-5d04-4826-aa62-7f61a6647930">
-        <input type="hidden" name="subject" value="Zen Hobi Sanat — Yeni Kurs Başvurusu">
+        <input type="hidden" name="subject" value="🔔 Yeni Kayıt Başvurusu — Zen Hobi Sanat">
         <input type="hidden" name="basvuru_dokumani" id="basvuruDokumani">
         <div class="form-success">Başvurunuz alındı! En kısa sürede sizi arayıp uygun atölye, gün ve saati birlikte planlayacağız.</div>
         <p class="pdf-note form-note" hidden>📄 Başvurunuzun PDF kopyası bilgisayarınıza indirildi — WhatsApp'tan paylaşmak isterseniz bu dosyayı kullanabilirsiniz.</p>
@@ -627,7 +627,7 @@
         var docField = form.querySelector('#basvuruDokumani');
         if (docField) docField.value = applicationHtml;
         fd = new FormData(form);
-        var subject = (form.querySelector('input[name="subject"]') || {}).value || 'Zen Hobi Sanat — Yeni Kurs Başvurusu';
+        var subject = (form.querySelector('input[name="subject"]') || {}).value || '🔔 Yeni Kayıt Başvurusu — Zen Hobi Sanat';
         if (basvuruNo) subject = '#' + basvuruNo + ' — ' + subject;
 
         return libsPromise.catch(function () {}).then(function () {

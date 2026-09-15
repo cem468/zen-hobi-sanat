@@ -125,7 +125,7 @@
     <div class="form-card" style="max-width:46rem;margin:0 auto" data-reveal>
       <form data-form id="kayitForm" action="https://api.web3forms.com/submit" method="POST">
         <input type="hidden" name="access_key" value="63fc186e-5d04-4826-aa62-7f61a6647930">
-        <input type="hidden" name="subject" value="Zen Hobi Sanat — New Course Application (EN)">
+        <input type="hidden" name="subject" value="🔔 New Course Application — Zen Hobi Sanat">
         <input type="hidden" name="basvuru_dokumani" id="basvuruDokumani">
         <div class="form-success">Your application has been received! We'll contact you shortly to plan the right studio, day and time together.</div>
         <p class="pdf-note form-note" hidden>📄 A PDF copy of your application has been downloaded to your computer — feel free to use it if you'd like to share it via WhatsApp.</p>
@@ -624,7 +624,7 @@
         var docField = form.querySelector('#basvuruDokumani');
         if (docField) docField.value = applicationHtml;
         fd = new FormData(form);
-        var subject = (form.querySelector('input[name="subject"]') || {}).value || 'Zen Hobi Sanat — New Course Application (EN)';
+        var subject = (form.querySelector('input[name="subject"]') || {}).value || '🔔 New Course Application — Zen Hobi Sanat';
         if (basvuruNo) subject = '#' + basvuruNo + ' — ' + subject;
 
         return libsPromise.catch(function () {}).then(function () {
