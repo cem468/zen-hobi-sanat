@@ -217,10 +217,17 @@
 </section>
 
 <!-- ======================= EFFECT ON CHILDREN (split rev, video) ======================= -->
+<style>
+#cocuklarda-video{ aspect-ratio:9/16; }
+@media (min-width:881px){
+  #cocuklarda-split{ align-items:stretch; }
+  #cocuklarda-video{ height:100%; aspect-ratio:auto; }
+}
+</style>
 <section class="section bg-sand">
-  <div class="wrap split rev">
+  <div class="wrap split rev" id="cocuklarda-split">
     <div class="split-media" data-reveal>
-      <div class="video-feature" style="aspect-ratio:9/16">
+      <div class="video-feature" id="cocuklarda-video">
         <video data-autoplay muted loop playsinline preload="none" data-poster="../assets/img/dogum-gunu/dogum-gunu-2-poster.webp">
           <source src="../assets/video/dogum-gunu-2.mp4" type="video/mp4">
         </video>
