@@ -259,8 +259,11 @@
         });
       });
 
-      /* stat count-up — only for clean "N" / "N+" values (skips ranges like "4–99") */
-      $$(".statrow .num, .hero-stats .num").forEach(function (el) {
+      /* stat count-up — only for clean "N" / "N+" values (skips ranges like "4–99").
+         Excludes .hero-stats: it's above the fold and animates in with the hero's
+         own fade-in at the same time, so the 0→N count-up read as a glitch (the
+         digit flashing away) rather than a deliberate animation. */
+      $$(".statrow .num").forEach(function (el) {
         var m = el.textContent.trim().match(/^(\d[\d.,]*)(.*)$/);
         if (!m || /[–-]\s*\d/.test(m[2])) return;
         var target = parseInt(m[1].replace(/[.,]/g, ""), 10);
