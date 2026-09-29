@@ -191,10 +191,17 @@
 </section>
 
 <!-- ======================= INTRO SPLIT ======================= -->
+<style>
+#renkli-video{ aspect-ratio:9/16; }
+@media (min-width:881px){
+  #renkli-split{ align-items:stretch; }
+  #renkli-video{ height:100%; aspect-ratio:auto; }
+}
+</style>
 <section class="section">
-  <div class="wrap split">
+  <div class="wrap split" id="renkli-split">
     <div class="split-media" data-reveal>
-      <div class="video-feature" style="aspect-ratio:9/16">
+      <div class="video-feature" id="renkli-video">
         <video data-autoplay muted loop playsinline preload="none" data-poster="assets/img/dogum-gunu/dogum-gunu-1-poster.webp">
           <source src="assets/video/dogum-gunu-1.mp4" type="video/mp4">
         </video>
